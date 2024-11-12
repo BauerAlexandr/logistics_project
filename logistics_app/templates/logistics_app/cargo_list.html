@@ -1,0 +1,87 @@
+{% extends 'logistics_app/base.html' %}
+{% load static %}
+{% block content %}
+
+<h2>Список грузов</h2>
+
+<!-- Кнопка для добавления нового груза -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCargoModal">
+    Добавить груз
+</button>
+
+<!-- Таблица с грузами -->
+<table class="table mt-3">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Описание</th>
+            <th>Стоимость</th>
+            <th>Единица измерения</th>
+            <th>Застрахованная стоимость</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cargo in cargos %}
+        <tr>
+            <td>{{ cargo.name }}</td>
+            <td>{{ cargo.description }}</td>
+            <td>{{ cargo.declared_value }}</td>
+            <td>{{ cargo.unit_of_measurement.name }}</td>
+            <td>{{ cargo.insured_value }}</td>
+            <td>
+                <!-- Кнопка для редактирования груза -->
+                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editCargoModal{{ cargo.id }}">
+                    Редактировать
+                </button>
+            </td>
+        </tr>
+
+        <!-- Модальное окно для редактирования груза -->
+        <div class="modal fade" id="editCargoModal{{ cargo.id }}" tabindex="-1" aria-labelledby="editCargoModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Редактировать груз</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="post" action="{% url 'edit_cargo' cargo.id %}">
+                        {% csrf_token %}
+                        <div class="modal-body">
+                            {{ cargo_form.as_p }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                            <button type="submit" class="btn btn-success">Сохранить изменения</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Модальное окно для добавления нового груза -->
+<div class="modal fade" id="addCargoModal" tabindex="-1" aria-labelledby="addCargoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Добавить груз</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'add_cargo' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    {{ cargo_form.as_p }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="submit" class="btn btn-primary">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

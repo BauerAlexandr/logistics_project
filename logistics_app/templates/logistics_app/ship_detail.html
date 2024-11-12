@@ -1,0 +1,13 @@
+{% extends 'logistics_app/base.html' %}
+
+{% block title %}Ship Details{% endblock %}
+
+{% block content %}
+<h2>{{ ship.name }}</h2>
+<p><strong>Registration Number:</strong> {{ ship.registration_number }}</p>
+<p><strong>Capacity:</strong> {{ ship.capacity }}</p>
+<p><strong>Year Built:</strong> {{ ship.year_built }}</p>
+<p><strong>Home Port:</strong> {{ ship.home_port.name }}</p>
+<p><strong>Ship Type:</strong> {{ ship.ship_type.name }}</p>
+<p><strong>Captain:</strong> {{ ship.crew_captain.first_name }} {{ ship.crew_captain.last_name }}</p>
+{% endblock %}

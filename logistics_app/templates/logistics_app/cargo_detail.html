@@ -1,0 +1,10 @@
+{% extends 'logistics_app/base.html' %}
+
+{% block title %}Cargo Details{% endblock %}
+
+{% block content %}
+<h2>{{ cargo.name }}</h2>
+<p><strong>Description:</strong> {{ cargo.description }}</p>
+<p><strong>Declared Value:</strong> {{ cargo.declared_value }}</p>
+<p><strong>Insured Value:</strong> {{ cargo.insured_value }}</p>
+{% endblock %}
