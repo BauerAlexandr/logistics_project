@@ -30,13 +30,37 @@
             <td>{{ cargo.unit_of_measurement.name }}</td>
             <td>{{ cargo.insured_value }}</td>
             <td>
+                <!-- Кнопка для детального просмотра -->
+                <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#cargoDetailModal{{ cargo.id }}">
+                    Подробнее
+                </button>
                 <!-- Кнопка для редактирования груза -->
                 <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editCargoModal{{ cargo.id }}">
                     Редактировать
                 </button>
             </td>
         </tr>
-
+        
+        <!-- Модальное окно для детального просмотра груза -->
+        <div class="modal fade" id="cargoDetailModal{{ cargo.id }}" tabindex="-1" aria-labelledby="cargoDetailModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Детали груза: {{ cargo.name }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Описание:</strong> {{ cargo.description }}</p>
+                        <p><strong>Объявленная стоимость:</strong> {{ cargo.declared_value }}</p>
+                        <p><strong>Единица измерения:</strong> {{ cargo.unit_of_measurement.name }}</p>
+                        <p><strong>Застрахованная стоимость:</strong> {{ cargo.insured_value }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- Модальное окно для редактирования груза -->
         <div class="modal fade" id="editCargoModal{{ cargo.id }}" tabindex="-1" aria-labelledby="editCargoModalLabel" aria-hidden="true">
             <div class="modal-dialog">

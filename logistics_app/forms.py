@@ -67,3 +67,6 @@ class PierForm(forms.ModelForm):
             'port': 'Порт',
             'purpose': 'Назначение'
         }
+        widgets = {
+            'purpose': forms.Textarea(attrs={'rows': 3}),
+        }

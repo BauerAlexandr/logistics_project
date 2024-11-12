@@ -1,0 +1,84 @@
+{% extends 'logistics_app/base.html' %}
+{% load static %}
+{% block content %}
+
+<h2>Список пирсов</h2>
+
+<!-- Кнопка для добавления нового пирса -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPierModal">
+    Добавить пирс
+</button>
+
+<!-- Таблица с пирсами -->
+<table class="table mt-3">
+    <thead>
+        <tr>
+            <th>Маршрут</th>
+            <th>Порт</th>
+            <th>Цель назначения</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pier in piers %}
+        <tr>
+            <td>{{ pier.route.departure_date }} - {{ pier.route.arrival_date }}</td>
+            <td>{{ pier.port.name }}</td>
+            <td>{{ pier.purpose }}</td>
+            <td>
+                <!-- Кнопка для редактирования пирса -->
+                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editPierModal{{ pier.id }}">
+                    Редактировать
+                </button>
+            </td>
+        </tr>
+
+        <!-- Модальное окно для редактирования пирса -->
+        <div class="modal fade" id="editPierModal{{ pier.id }}" tabindex="-1" aria-labelledby="editPierModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Редактировать пирс</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="post" action="{% url 'edit_pier' pier.id %}">
+                        {% csrf_token %}
+                        <div class="modal-body">
+                            <input type="hidden" name="pier_id" value="{{ pier.id }}">
+                            {{ pier_form.as_p }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                            <button type="submit" class="btn btn-success">Сохранить изменения</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Модальное окно для добавления нового пирса -->
+<div class="modal fade" id="addPierModal" tabindex="-1" aria-labelledby="addPierModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Добавить пирс</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'add_pier' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    {{ pier_form.as_p }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="submit" class="btn btn-primary">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

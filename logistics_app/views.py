@@ -9,9 +9,9 @@ def index(request):
 
 # === SHIPS ===
 def ships_list(request):
-    ships = Ship.objects.all()
+    ships = Ship.objects.select_related('home_port', 'ship_type').all()
 
-    # Форма для добавления корабля
+    # Форма для добавления нового корабля
     if request.method == 'POST' and 'add-ship' in request.POST:
         ship_form = ShipForm(request.POST)
         if ship_form.is_valid():
@@ -29,19 +29,17 @@ def edit_ship(request, ship_id):
     ship = get_object_or_404(Ship, id=ship_id)
     
     if request.method == 'POST':
-        form = ShipForm(request.POST, instance=ship)
-        if form.is_valid():
-            form.save()
+        edit_ship_form = ShipForm(request.POST, instance=ship)
+        if edit_ship_form.is_valid():
+            edit_ship_form.save()
             return redirect('ships_list')
     else:
-        form = ShipForm(instance=ship)
+        edit_ship_form = ShipForm(instance=ship)
     
     return redirect('ships_list')
 
 
-def ship_detail(request, ship_id):
-    ship = get_object_or_404(Ship, pk=ship_id)
-    return render(request, 'logistics_app/ship_detail.html', {'ship': ship})
+
 
 
 # === CARGO ===
@@ -77,9 +75,6 @@ def edit_cargo(request, cargo_id):
     return redirect('cargo_list')
 
 
-def cargo_detail(request, cargo_id):
-    cargo = get_object_or_404(Cargo, pk=cargo_id)
-    return render(request, 'logistics_app/cargo_detail.html', {'cargo': cargo})
 
 
 # === CLIENTS ===
@@ -114,14 +109,12 @@ def edit_client(request, client_id):
     return redirect('clients_list')
 
 
-def client_detail(request, client_id):
-    client = get_object_or_404(Client, pk=client_id)
-    return render(request, 'logistics_app/client_detail.html', {'client': client})
 
 
 # === ROUTES ===
 def routes_list(request):
     routes = Route.objects.all()
+    
 
     # Форма для добавления маршрута
     if request.method == 'POST' and 'add-route' in request.POST:
@@ -152,9 +145,6 @@ def edit_route(request, route_id):
     return redirect('routes_list')
 
 
-def route_detail(request, route_id):
-    route = get_object_or_404(Route, pk=route_id)
-    return render(request, 'logistics_app/route_detail.html', {'route': route})
 
 
 # === REPORTS ===
@@ -175,12 +165,33 @@ def reports(request):
 
 
 # Добавление пирса
-def add_pier(request):
+def pier_list(request):
+    piers = Pier.objects.select_related('route', 'port').all()
+
+    # Обработка добавления нового пирса
+    if request.method == 'POST' and 'add-pier' in request.POST:
+        pier_form = PierForm(request.POST)
+        if pier_form.is_valid():
+            pier_form.save()
+            return redirect('pier_list')
+    else:
+        pier_form = PierForm()
+
+    return render(request, 'logistics_app/pier_list.html', {
+        'piers': piers,
+        'pier_form': pier_form,
+    })
+
+
+def edit_pier(request, pier_id):
+    pier = get_object_or_404(Pier, id=pier_id)
+    
     if request.method == 'POST':
-        form = PierForm(request.POST)
+        form = PierForm(request.POST, instance=pier)
         if form.is_valid():
             form.save()
-            return redirect('piers_list')
+            return redirect('pier_list')
     else:
-        form = PierForm()
-    return render(request, 'logistics_app/add_pier.html', {'form': form})
+        form = PierForm(instance=pier)
+    
+    return redirect('pier_list')

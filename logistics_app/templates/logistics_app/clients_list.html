@@ -28,12 +28,36 @@
             <td>{{ client.client_account }}</td>
             <td>{{ client.city.name }}</td>
             <td>
+                <!-- Кнопка для детального просмотра -->
+                <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#clientDetailModal{{ client.id }}">
+                    Подробнее
+                </button>
                 <!-- Кнопка для редактирования -->
                 <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editClientModal{{ client.id }}">
                     Редактировать
                 </button>
             </td>
         </tr>
+
+        <!-- Модальное окно для детального просмотра клиента -->
+        <div class="modal fade" id="clientDetailModal{{ client.id }}" tabindex="-1" aria-labelledby="clientDetailModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Детали клиента: {{ client.name }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>ИНН:</strong> {{ client.tax_id_number }}</p>
+                        <p><strong>Клиентский аккаунт:</strong> {{ client.client_account }}</p>
+                        <p><strong>Город:</strong> {{ client.city.name }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Модальное окно для редактирования клиента -->
         <div class="modal fade" id="editClientModal{{ client.id }}" tabindex="-1" aria-labelledby="editClientModalLabel" aria-hidden="true">

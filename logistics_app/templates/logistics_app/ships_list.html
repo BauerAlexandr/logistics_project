@@ -4,7 +4,7 @@
 
 <h2>Список кораблей</h2>
 
-<!-- Кнопка для добавления корабля -->
+<!-- Кнопка для добавления нового корабля -->
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addShipModal">
     Добавить корабль
 </button>
@@ -28,14 +28,41 @@
             <td>{{ ship.year_built }}</td>
             <td>{{ ship.home_port.name }}</td>
             <td>
-                <!-- Кнопка для редактирования -->
+                <!-- Кнопка для детального просмотра -->
+                <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#shipDetailModal{{ ship.id }}">
+                    Подробнее
+                </button>
+                <!-- Кнопка для открытия модального окна редактирования -->
                 <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editShipModal{{ ship.id }}">
                     Редактировать
                 </button>
             </td>
         </tr>
+        
 
-        <!-- Модальное окно для редактирования корабля -->
+        <!-- Модальное окно для детального просмотра корабля -->
+        <div class="modal fade" id="shipDetailModal{{ ship.id }}" tabindex="-1" aria-labelledby="shipDetailModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Детали корабля: {{ ship.name }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Регистрационный номер:</strong> {{ ship.registration_number }}</p>
+                        <p><strong>Год постройки:</strong> {{ ship.year_built }}</p>
+                        <p><strong>Емкость:</strong> {{ ship.capacity }}</p>
+                        <p><strong>Домашний порт:</strong> {{ ship.home_port.name }}</p>
+                        <p><strong>Тип корабля:</strong> {{ ship.ship_type.name }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно редактирования -->
         <div class="modal fade" id="editShipModal{{ ship.id }}" tabindex="-1" aria-labelledby="editShipModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -50,7 +77,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                            <button type="submit" class="btn btn-success">Сохранить изменения</button>
+                            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
                         </div>
                     </form>
                 </div>
@@ -58,28 +85,27 @@
         </div>
         {% endfor %}
     </tbody>
-</table>
-
-<!-- Модальное окно для добавления корабля -->
-<div class="modal fade" id="addShipModal" tabindex="-1" aria-labelledby="addShipModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Добавить корабль</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Модальное окно для добавления нового корабля -->
+    <div class="modal fade" id="addShipModal" tabindex="-1" aria-labelledby="addShipModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addShipModalLabel">Добавить новый корабль</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" action="{% url 'add_ship' %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        {{ ship_form.as_p }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                        <button type="submit" class="btn btn-primary">Добавить</button>
+                    </div>
+                </form>
             </div>
-            <form method="post" action="{% url 'add_ship' %}">
-                {% csrf_token %}
-                <div class="modal-body">
-                    {{ ship_form.as_p }}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                    <button type="submit" class="btn btn-primary">Добавить</button>
-                </div>
-            </form>
         </div>
     </div>
-</div>
+</table>
 
 {% endblock %}

@@ -26,12 +26,45 @@
             <td>{{ route.departure_date }}</td>
             <td>{{ route.arrival_date }}</td>
             <td>
+                <!-- Кнопка для детального просмотра -->
+                <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#routeDetailModal{{ route.id }}">
+                    Подробнее
+                </button>
                 <!-- Кнопка для редактирования маршрута -->
                 <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editRouteModal{{ route.id }}">
                     Редактировать
                 </button>
             </td>
         </tr>
+
+        <!-- Модальное окно для детального просмотра маршрута -->
+        <div class="modal fade" id="routeDetailModal{{ route.id }}" tabindex="-1" aria-labelledby="routeDetailModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Детали маршрута</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Дата отправления:</strong> {{ route.departure_date }}</p>
+                        <p><strong>Дата прибытия:</strong> {{ route.arrival_date }}</p>
+                        {% if route.transportation_set.first %}
+                            <p><strong>Корабль:</strong> {{ route.transportation_set.first.ship.name }}</p>
+                        {% else %}
+                            Не указан
+                        {% endif %}
+                        {% if route.pier_set.first %}
+                            <p><strong>Пирс отправления:</strong> {{ route.pier_set.first.port.name }}</p>
+                        {% else %}
+                            Не указан
+                        {% endif %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Модальное окно для редактирования маршрута -->
         <div class="modal fade" id="editRouteModal{{ route.id }}" tabindex="-1" aria-labelledby="editRouteModalLabel" aria-hidden="true">
