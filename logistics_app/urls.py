@@ -1,7 +1,18 @@
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
+    path('register/', views.register, name='register'),
+    path('login/', views.user_login, name='login'),
+    path('logout/', views.user_logout, name='logout'),
+    path('dashboard/', views.dashboard, name='dashboard'),
+    path('dashboard/director/', views.director_dashboard, name='director_dashboard'),
+    path('dashboard/client/', views.client_dashboard, name='client_dashboard'),
+    path('dashboard/manager/', views.manager_dashboard, name='manager_dashboard'),
+    
+    path('debug/', views.debug_view, name='debug'),
+
     path('', views.index, name='index'),  # Главная страница
 
     # Страницы для кораблей

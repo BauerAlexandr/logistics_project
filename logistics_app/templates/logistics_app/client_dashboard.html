@@ -1,0 +1,18 @@
+{% extends "logistics_app/base.html" %}
+
+{% block title %}Client Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Welcome, {{ user.username }}!</h1>
+    <p>You are logged in as <strong>Client</strong>.</p>
+    <div class="mt-4">
+        <h3>Client Options:</h3>
+        <ul>
+            <li><a href="{% url 'cargo_list' %}">View My Cargo</a></li>
+            <li><a href="{% url 'routes_list' %}">Track Routes</a></li>
+            <li><a href="{% url 'reports' %}">Access Reports</a></li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

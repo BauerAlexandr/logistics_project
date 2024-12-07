@@ -5,7 +5,34 @@
 #   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
+from django.contrib.auth.models import AbstractUser
 from django.db import models
+
+
+class CustomUser(AbstractUser):
+    role = models.CharField(
+        max_length=20,
+        choices=[
+        ('director', 'Director'),
+        ('manager', 'Manager'),
+        ('client', 'Client'),
+    ],
+        default='client',
+        verbose_name='Role'
+    )
+
+    def is_director(self):
+        return self.role == 'director'
+
+    def is_manager(self):
+        return self.role == 'manager'
+
+    def is_client(self):
+        return self.role == 'client'
+
+    def __str__(self):
+        return f"{self.username} ({self.role})"
+
 
 class Bank(models.Model):
     name = models.CharField(max_length=50)
@@ -16,7 +43,7 @@ class Bank(models.Model):
 
     def __str__(self):
         return self.name
-
+ 
 
 class Cargo(models.Model):
     name = models.CharField(max_length=50)
@@ -81,10 +108,15 @@ class Client(models.Model):
 
 
 class Crew(models.Model):
+    POST_CHOICES = [
+        ('Капитан', 'Капитан'),
+        ('Сотрудник', 'Сотрудник'),
+        
+    ]
     last_name = models.CharField(max_length=50)
     first_name = models.CharField(max_length=50)
     middle_name = models.CharField(max_length=50, blank=True, null=True)
-    post = models.TextField()
+    post = models.CharField(max_length=20, choices=POST_CHOICES)
 
     class Meta:
         managed = False
@@ -95,9 +127,14 @@ class Crew(models.Model):
 
 
 class Pier(models.Model):
+    PURPOSE_CHOICES = [
+        ('Порт прибытия', 'Порт прибытия'),
+        ('Порт отправления', 'Порт отправления'),
+        ('Промежуточный порт', 'Промежуточный порт'),
+    ]
     route = models.ForeignKey('Route', models.DO_NOTHING, blank=True, null=True)
     port = models.ForeignKey('Port', models.DO_NOTHING, blank=True, null=True)
-    purpose = models.TextField(blank=True, null=True)
+    purpose = models.CharField(max_length=20, choices=PURPOSE_CHOICES)
 
     class Meta:
         managed = False

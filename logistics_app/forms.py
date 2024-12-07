@@ -1,5 +1,49 @@
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.models import Group
 from django import forms
-from .models import Client, Ship, Cargo, Route, Pier
+from .models import CustomUser, Client, Ship, Cargo, Route, Pier
+
+
+class UserRegistrationForm(UserCreationForm):
+    ROLE_CHOICES = [
+        ('director', 'Director'),
+        ('manager', 'Manager'),
+        ('client', 'Client'),
+    ]
+    role = forms.ChoiceField(choices=ROLE_CHOICES, required=True, label="Role")
+    email = forms.EmailField(label="Email", required=True)
+    first_name = forms.CharField(label="First Name", max_length=30, required=True)
+    last_name = forms.CharField(label="Last Name", max_length=30, required=True)
+
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2', 'role']
+
+class UserLoginForm(AuthenticationForm):
+    username = forms.CharField(label="Username", max_length=254)
+    password = forms.CharField(label="Password", widget=forms.PasswordInput)
+
+class CustomUserCreationForm(UserCreationForm):
+    email = forms.EmailField()
+    role = forms.ChoiceField(choices=[('client', 'Client'), ('director', 'Director'), ('manager', 'Manager')])
+
+    class Meta:
+        model = CustomUser
+        fields = ('username', 'email', 'password1', 'password2', 'role')
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        role = self.cleaned_data['role']
+
+        if commit:
+            user.save()
+
+        # Назначаем роль пользователю, используя группу в Django
+        group = Group.objects.get(name=role)
+        user.groups.add(group)
+
+        return user
+
 
 class ClientForm(forms.ModelForm):
     class Meta:
@@ -67,6 +111,4 @@ class PierForm(forms.ModelForm):
             'port': 'Порт',
             'purpose': 'Назначение'
         }
-        widgets = {
-            'purpose': forms.Textarea(attrs={'rows': 3}),
-        }
+        
