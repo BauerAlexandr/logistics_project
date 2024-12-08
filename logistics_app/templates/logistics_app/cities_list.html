@@ -1,0 +1,101 @@
+{% extends 'logistics_app/base.html' %}
+{% load static %}
+{% block content %}
+
+<h2>Список городов</h2>
+
+<!-- Кнопка для добавления нового города -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCityModal">
+    Добавить город
+</button>
+
+<!-- Таблица с городами -->
+<table class="table mt-3">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for city in cities %}
+        <tr>
+            <td>{{ city.name }}</td>
+            <td>
+                <!-- Кнопка для детального просмотра -->
+                <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#cityDetailModal{{ city.id }}">
+                    Подробнее
+                </button>
+                <!-- Кнопка для редактирования -->
+                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editCityModal{{ city.id }}">
+                    Редактировать
+                </button>
+            </td>
+        </tr>
+
+        <!-- Модальное окно для детального просмотра города -->
+        <div class="modal fade" id="cityDetailModal{{ city.id }}" tabindex="-1" aria-labelledby="cityDetailModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Детали города: {{ city.name }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Название:</strong> {{ city.name }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно редактирования города -->
+        <div class="modal fade" id="editCityModal{{ city.id }}" tabindex="-1" aria-labelledby="editCityModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Редактировать город</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="post" action="{% url 'edit_city' city.id %}">
+                        {% csrf_token %}
+                        <div class="modal-body">
+                            {{ city_form.as_p }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Модальное окно для добавления нового города -->
+<div class="modal fade" id="addCityModal" tabindex="-1" aria-labelledby="addCityModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCityModalLabel">Добавить новый город</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'add_city' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    {{ city_form.as_p }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="submit" name="add-city" class="btn btn-primary">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

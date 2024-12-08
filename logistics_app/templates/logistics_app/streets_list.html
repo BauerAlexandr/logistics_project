@@ -1,0 +1,101 @@
+{% extends 'logistics_app/base.html' %}
+{% load static %}
+{% block content %}
+
+<h2>Список улиц</h2>
+
+<!-- Кнопка для добавления новой улицы -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStreetModal">
+    Добавить улицу
+</button>
+
+<!-- Таблица с улицами -->
+<table class="table mt-3">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for street in streets %}
+        <tr>
+            <td>{{ street.name }}</td>
+            <td>
+                <!-- Кнопка для детального просмотра -->
+                <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#streetDetailModal{{ street.id }}">
+                    Подробнее
+                </button>
+                <!-- Кнопка для редактирования -->
+                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editStreetModal{{ street.id }}">
+                    Редактировать
+                </button>
+            </td>
+        </tr>
+
+        <!-- Модальное окно для детального просмотра улицы -->
+        <div class="modal fade" id="streetDetailModal{{ street.id }}" tabindex="-1" aria-labelledby="streetDetailModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Детали улицы: {{ street.name }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Название:</strong> {{ street.name }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно редактирования улицы -->
+        <div class="modal fade" id="editStreetModal{{ street.id }}" tabindex="-1" aria-labelledby="editStreetModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Редактировать улицу</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="post" action="{% url 'edit_street' street.id %}">
+                        {% csrf_token %}
+                        <div class="modal-body">
+                            {{ street_form.as_p }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Модальное окно для добавления новой улицы -->
+<div class="modal fade" id="addStreetModal" tabindex="-1" aria-labelledby="addStreetModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addStreetModalLabel">Добавить новую улицу</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'add_street' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    {{ street_form.as_p }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="submit" name="add-street" class="btn btn-primary">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

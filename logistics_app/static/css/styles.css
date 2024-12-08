@@ -1,0 +1,34 @@
+/* Основной стиль бокового меню */
+.sidebar {
+    width: 280px;
+    transition: width 0.3s ease;
+    overflow: hidden;
+    height: 100vh;
+}
+
+.sidebar.collapsed {
+    width: 80px;
+}
+
+/* Скрываем текст при свернутом меню */
+.sidebar.collapsed .menu-text {
+    display: none;
+}
+
+.sidebar.collapsed .dropdown-toggle::after {
+    display: none;
+}
+
+/* Центровка иконок */
+.sidebar .nav-link, .sidebar .btn {
+    display: flex;
+    align-items: center;
+}
+
+.sidebar.collapsed .nav-link, .sidebar.collapsed .btn {
+    justify-content: center;
+}
+
+.sidebar .dropdown-menu {
+    position: relative;
+}

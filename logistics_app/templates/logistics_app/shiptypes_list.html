@@ -1,0 +1,101 @@
+{% extends 'logistics_app/base.html' %}
+{% load static %}
+{% block content %}
+
+<h2>Список типов судов</h2>
+
+<!-- Кнопка для добавления нового типа судна -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addShipTypeModal">
+    Добавить тип судна
+</button>
+
+<!-- Таблица с типами судов -->
+<table class="table mt-3">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for shiptype in shiptypes %}
+        <tr>
+            <td>{{ shiptype.name }}</td>
+            <td>
+                <!-- Кнопка для детального просмотра -->
+                <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#shipTypeDetailModal{{ shiptype.id }}">
+                    Подробнее
+                </button>
+                <!-- Кнопка для редактирования -->
+                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editShipTypeModal{{ shiptype.id }}">
+                    Редактировать
+                </button>
+            </td>
+        </tr>
+
+        <!-- Модальное окно для детального просмотра типа судна -->
+        <div class="modal fade" id="shipTypeDetailModal{{ shiptype.id }}" tabindex="-1" aria-labelledby="shipTypeDetailModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Детали типа судна: {{ shiptype.name }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Название:</strong> {{ shiptype.name }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно редактирования типа судна -->
+        <div class="modal fade" id="editShipTypeModal{{ shiptype.id }}" tabindex="-1" aria-labelledby="editShipTypeModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Редактировать тип судна</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="post" action="{% url 'edit_shiptype' shiptype.id %}">
+                        {% csrf_token %}
+                        <div class="modal-body">
+                            {{ shiptype_form.as_p }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Модальное окно для добавления нового типа судна -->
+<div class="modal fade" id="addShipTypeModal" tabindex="-1" aria-labelledby="addShipTypeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addShipTypeModalLabel">Добавить новый тип судна</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'add_shiptype' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    {{ shiptype_form.as_p }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="submit" name="add-shiptype" class="btn btn-primary">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

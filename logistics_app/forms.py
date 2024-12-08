@@ -1,7 +1,8 @@
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import Group
 from django import forms
-from .models import CustomUser, Client, Ship, Cargo, Route, Pier
+from .models import Client, Ship, Cargo, Route, Pier, Bank, City, Crew, Port, Service, Shiptype
+from .models import CustomUser, Status, Street, Cargobatch, Unitofmeasurement, Summary, Transportation
 
 
 class UserRegistrationForm(UserCreationForm):
@@ -111,4 +112,118 @@ class PierForm(forms.ModelForm):
             'port': 'Порт',
             'purpose': 'Назначение'
         }
-        
+
+class BankForm(forms.ModelForm):
+    class Meta:
+        model = Bank
+        fields = ['name']
+        labels = {
+            'name': 'Название'
+        }
+
+class CityForm(forms.ModelForm):
+    class Meta:
+        model = City
+        fields = ['name']
+        labels = {
+            'name': 'Название'
+        }
+
+class StatusForm(forms.ModelForm):
+    class Meta:
+        model = Status
+        fields = ['name']
+        labels = {
+            'name': 'Название'
+        }
+
+class StreetForm(forms.ModelForm):
+    class Meta:
+        model = Street
+        fields = ['name']
+        labels = {
+            'name': 'Название'
+        }
+
+class CargoBatchForm(forms.ModelForm):
+    class Meta:
+        model = Cargobatch
+        fields = ['number_declaration', 'departure_date', 'arrival_date', 'ship', 'port_of_departure', 'port_of_arrival', 'client_recipient', 'client_sender', 'customs_number']
+        labels = {
+            'number_declaration': 'Номер декларации',
+            'departure_date': 'Дата отправления',
+            'arrival_date': 'Дата прибытия',
+            'ship': 'Судно',
+            'port_of_departure': 'Порт отправления',
+            'port_of_arrival': 'Порт прибытия',
+            'client_recipient': 'Клиент-получатель',
+            'client_sender': 'Клиент-отправитель',
+            'customs_number': 'Таможенный номер'
+        }
+        widgets = {
+            'departure_date': forms.DateInput(attrs={'type': 'date'}),
+            'arrival_date': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+class CrewForm(forms.ModelForm):
+    class Meta:
+        model = Crew
+        fields = ['last_name', 'first_name', 'middle_name', 'post']
+        labels = {
+            'last_name': 'Фамилия',
+            'first_name': 'Имя',
+            'middle_name': 'Отчество',
+            'post': 'Должность'
+        }
+
+class PortForm(forms.ModelForm):
+    class Meta:
+        model = Port
+        fields = ['name', 'coordinates']
+        labels = {
+            'name': 'Название',
+            'coordinates': 'Координаты'
+        }
+
+class ServiceForm(forms.ModelForm):
+    class Meta:
+        model = Service
+        fields = ['ship', 'crew_employee']
+        labels = {
+            'ship': 'Судно',
+            'crew_employee': 'Сотрудник'
+        }
+
+class ShipTypeForm(forms.ModelForm):
+    class Meta:
+        model = Shiptype
+        fields = ['name']
+        labels = {
+            'name': 'Название'
+        }
+
+class SummaryForm(forms.ModelForm):
+    class Meta:
+        model = Summary
+        fields = ['cargo_batch', 'cargo']
+        labels = {
+            'cargo_batch': 'Партия груза',
+            'cargo': 'Груз'
+        }
+
+class TransportationForm(forms.ModelForm):
+    class Meta:
+        model = Transportation
+        fields = ['ship', 'route']
+        labels = {
+            'ship': 'Судно',
+            'route': 'Маршрут'
+        }
+
+class UnitOfMeasurementForm(forms.ModelForm):
+    class Meta:
+        model = Unitofmeasurement
+        fields = ['name']
+        labels = {
+            'name': 'Название'
+        }

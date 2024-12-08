@@ -1,0 +1,119 @@
+{% extends 'logistics_app/base.html' %}
+{% load static %}
+{% block content %}
+
+<h2>Список партий грузов</h2>
+
+<!-- Кнопка для добавления новой партии -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCargoBatchModal">
+    Добавить партию груза
+</button>
+
+<!-- Таблица с партиями грузов -->
+<table class="table mt-3">
+    <thead>
+        <tr>
+            <th>Номер декларации</th>
+            <th>Дата отправления</th>
+            <th>Дата прибытия</th>
+            <th>Судно</th>
+            <th>Порт отправления</th>
+            <th>Порт прибытия</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for batch in cargobatches %}
+        <tr>
+            <td>{{ batch.number_declaration }}</td>
+            <td>{{ batch.departure_date }}</td>
+            <td>{{ batch.arrival_date }}</td>
+            <td>{{ batch.ship.name }}</td>
+            <td>{{ batch.port_of_departure.name }}</td>
+            <td>{{ batch.port_of_arrival.name }}</td>
+            <td>
+                <!-- Кнопка для просмотра деталей -->
+                <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#cargoBatchDetailModal{{ batch.id }}">
+                    Подробнее
+                </button>
+                <!-- Кнопка для редактирования -->
+                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editCargoBatchModal{{ batch.id }}">
+                    Редактировать
+                </button>
+            </td>
+        </tr>
+
+        <!-- Модальное окно для деталей -->
+        <div class="modal fade" id="cargoBatchDetailModal{{ batch.id }}" tabindex="-1" aria-labelledby="cargoBatchDetailModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Детали партии груза: {{ batch.number_declaration }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Номер декларации:</strong> {{ batch.number_declaration }}</p>
+                        <p><strong>Дата отправления:</strong> {{ batch.departure_date }}</p>
+                        <p><strong>Дата прибытия:</strong> {{ batch.arrival_date }}</p>
+                        <p><strong>Судно:</strong> {{ batch.ship.name }}</p>
+                        <p><strong>Порт отправления:</strong> {{ batch.port_of_departure.name }}</p>
+                        <p><strong>Порт прибытия:</strong> {{ batch.port_of_arrival.name }}</p>
+                        <p><strong>Клиент-получатель:</strong> {{ batch.client_recipient.name }}</p>
+                        <p><strong>Клиент-отправитель:</strong> {{ batch.client_sender.name }}</p>
+                        <p><strong>Таможенный номер:</strong> {{ batch.customs_number }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно для редактирования -->
+        <div class="modal fade" id="editCargoBatchModal{{ batch.id }}" tabindex="-1" aria-labelledby="editCargoBatchModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Редактировать партию груза</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="post" action="{% url 'edit_cargobatch' batch.id %}">
+                        {% csrf_token %}
+                        <div class="modal-body">
+                            {{ cargobatch_form.as_p }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Модальное окно для добавления новой партии -->
+<div class="modal fade" id="addCargoBatchModal" tabindex="-1" aria-labelledby="addCargoBatchModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCargoBatchModalLabel">Добавить новую партию груза</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'add_cargobatch' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    {{ cargobatch_form.as_p }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="submit" name="add-cargobatch" class="btn btn-primary">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

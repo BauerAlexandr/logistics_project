@@ -1,0 +1,110 @@
+{% extends 'logistics_app/base.html' %}
+{% load static %}
+{% block content %}
+
+<h2>Список членов экипажа</h2>
+
+<!-- Кнопка для добавления нового члена экипажа -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCrewModal">
+    Добавить члена экипажа
+</button>
+
+<!-- Таблица с членами экипажа -->
+<table class="table mt-3">
+    <thead>
+        <tr>
+            <th>Фамилия</th>
+            <th>Имя</th>
+            <th>Отчество</th>
+            <th>Должность</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for crew in crews %}
+        <tr>
+            <td>{{ crew.last_name }}</td>
+            <td>{{ crew.first_name }}</td>
+            <td>{{ crew.middle_name }}</td>
+            <td>{{ crew.post }}</td>
+            <td>
+                <!-- Кнопка для просмотра деталей -->
+                <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#crewDetailModal{{ crew.id }}">
+                    Подробнее
+                </button>
+                <!-- Кнопка для редактирования -->
+                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editCrewModal{{ crew.id }}">
+                    Редактировать
+                </button>
+            </td>
+        </tr>
+
+        <!-- Модальное окно для деталей -->
+        <div class="modal fade" id="crewDetailModal{{ crew.id }}" tabindex="-1" aria-labelledby="crewDetailModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Детали члена экипажа: {{ crew.last_name }} {{ crew.first_name }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Фамилия:</strong> {{ crew.last_name }}</p>
+                        <p><strong>Имя:</strong> {{ crew.first_name }}</p>
+                        <p><strong>Отчество:</strong> {{ crew.middle_name }}</p>
+                        <p><strong>Должность:</strong> {{ crew.post }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно для редактирования -->
+        <div class="modal fade" id="editCrewModal{{ crew.id }}" tabindex="-1" aria-labelledby="editCrewModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Редактировать члена экипажа</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="post" action="{% url 'edit_crew' crew.id %}">
+                        {% csrf_token %}
+                        <div class="modal-body">
+                            {{ crew_form.as_p }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Модальное окно для добавления нового члена экипажа -->
+<div class="modal fade" id="addCrewModal" tabindex="-1" aria-labelledby="addCrewModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCrewModalLabel">Добавить нового члена экипажа</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'add_crew' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    {{ crew_form.as_p }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="submit" name="add-crew" class="btn btn-primary">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
