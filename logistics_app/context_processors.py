@@ -1,17 +1,17 @@
 def menu_context(request):
     menu = [
-        {"name": "Главная", "icon": "icons/house-door.svg", "url": "dashboard"},
+        
         {
-            "name": "Управление клиентами и банками",
-            "icon": "icons/people.svg",
+            "name": "Клиенты",
+            
             "children": [
                 {"name": "Клиенты", "url": "clients_list"},
                 {"name": "Банки", "url": "banks_list"},
             ],
         },
         {
-            "name": "География и логистика",
-            "icon": "icons/geo-alt.svg",
+            "name": "География",
+            
             "children": [
                 {"name": "Города", "url": "cities_list"},
                 {"name": "Улицы", "url": "streets_list"},
@@ -20,8 +20,8 @@ def menu_context(request):
             ],
         },
         {
-            "name": "Флот и обслуживание",
-            "icon": "icons/life-preserver.svg",
+            "name": "Флотилия",
+            
             "children": [
                 {"name": "Корабли", "url": "ships_list"},
                 {"name": "Типы судов", "url": "shiptypes_list"},
@@ -30,16 +30,16 @@ def menu_context(request):
             ],
         },
         {
-            "name": "Маршруты и перевозки",
-            "icon": "icons/sign-merge-right.svg",
+            "name": "Навигация",
+            
             "children": [
                 {"name": "Маршруты", "url": "routes_list"},
                 {"name": "Перевозки", "url": "transportations_list"},
             ],
         },
         {
-            "name": "Управление грузами",
-            "icon": "icons/box-seam.svg",
+            "name": "Грузы",
+            
             "children": [
                 {"name": "Грузы", "url": "cargo_list"},
                 {"name": "Единицы измерения", "url": "unitofmeasurements_list"},
@@ -47,8 +47,8 @@ def menu_context(request):
             ],
         },
         {
-            "name": "Статусы и отчёты",
-            "icon": "icons/life-preserver.svg",
+            "name": "Отчеты",
+            
             "children": [
                 {"name": "Статусы", "url": "statuses_list"},
                 {"name": "Сводки", "url": "summaries_list"},

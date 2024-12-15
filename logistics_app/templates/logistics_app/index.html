@@ -1,8 +1,57 @@
 {% extends 'logistics_app/base.html' %}
+{% load static %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Добро пожаловать{% endblock %}
 
 {% block content %}
-<h1 class="text-center">Welcome to the Logistics Management System</h1>
-<p class="text-center">Use the navigation menu to manage ships, cargo, clients, routes, and reports.</p>
+    <div class="welcome-container">
+        <h1 class="welcome-title">Добро пожаловать на наш сайт логистической компании</h1>
+        <p class="welcome-text">
+            Мы предоставляем эффективные и безопасные морские перевозки по всему миру. Наша миссия – гарантировать надёжную доставку грузов, оптимизировать логистические процессы и предоставлять клиентам высокий уровень сервиса.
+        </p>
+        <div class="welcome-button">
+            <a href="{% url 'clients_list' %}" class="button">Узнать больше о клиентах</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_css %}
+    <style>
+        .welcome-container {
+            text-align: center;
+            margin: 50px auto;
+            max-width: 800px;
+            color: white;
+        }
+
+        .welcome-title {
+            font-size: 2em;
+            color: white;
+            margin: 0 0 20px 0;
+        }
+
+        .welcome-text {
+            font-size: 18px;
+            line-height: 1.6;
+            margin: 20px 0;
+        }
+
+        .welcome-button {
+            margin-top: 30px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 12px 20px;
+            background-color: rgba(35, 35, 63, 0.8);
+            color: white;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        .button:hover {
+            background-color: rgba(35, 35, 63, 1);
+        }
+    </style>
 {% endblock %}

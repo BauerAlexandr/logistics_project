@@ -7,18 +7,16 @@ from .models import CustomUser, Status, Street, Cargobatch, Unitofmeasurement, S
 
 class UserRegistrationForm(UserCreationForm):
     ROLE_CHOICES = [
-        ('director', 'Director'),
-        ('manager', 'Manager'),
-        ('client', 'Client'),
+        ('director', 'Директор'),
+        ('manager', 'Менеджер'),
+        ('client', 'Клиент'),
     ]
     role = forms.ChoiceField(choices=ROLE_CHOICES, required=True, label="Role")
     email = forms.EmailField(label="Email", required=True)
-    first_name = forms.CharField(label="First Name", max_length=30, required=True)
-    last_name = forms.CharField(label="Last Name", max_length=30, required=True)
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2', 'role']
+        fields = ['username', 'email', 'role', 'password1', 'password2']
 
 class UserLoginForm(AuthenticationForm):
     username = forms.CharField(label="Username", max_length=254)
@@ -30,7 +28,7 @@ class CustomUserCreationForm(UserCreationForm):
 
     class Meta:
         model = CustomUser
-        fields = ('username', 'email', 'password1', 'password2', 'role')
+        fields = ('username', 'email', 'role', 'password1', 'password2')
 
     def save(self, commit=True):
         user = super().save(commit=False)

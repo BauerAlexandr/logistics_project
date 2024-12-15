@@ -1,0 +1,209 @@
+/* Общие стили */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Inter', sans-serif;
+    background: url("../images/ship_background.jpg") no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    justify-content: flex-start; /* Смещение влево */
+    align-items: center; /* Центрирование по вертикали */
+    padding-left: 3.5%; /* Увеличенный отступ слева для точного позиционирования */
+}
+
+/* Контейнер формы */
+.auth-container {
+    width: 450px; /* Чуть больше ширина контейнера */
+    max-width: 90%; /* Адаптивность на маленьких экранах */
+    background: rgba(35, 35, 63, 0.7);
+    border-radius: 40px;
+    padding: 30px 25px; /* Увеличенные отступы */
+    box-sizing: border-box;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 50px; /* Равномерный отступ между объектами */
+    position: relative; /* Позволяет точное позиционирование содержимого */
+}
+
+/* Заголовок */
+.auth-header {
+    color: white;
+    font-size: 32px; /* Увеличен шрифт заголовка */
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    padding-bottom: 10px;
+}
+
+/* Поля ввода */
+.form-group-auth {
+    position: relative;
+    margin-bottom: 40px; /* Увеличенный отступ между полями */
+}
+
+.form-group-auth input {
+    width: 100%;
+    height: 75px; /* Увеличенная высота поля */
+    padding: 10px 15px 10px 55px; /* Дополнительный отступ слева */
+    font-size: 18px;
+    border: none;
+    border-radius: 12px;
+    background: rgba(241, 220, 218, 0.5);
+    color: black;
+    font-style: italic;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.form-group-auth i {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 22px;
+}
+
+/* Ссылки */
+.links {
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    margin-top: -30px;
+}
+
+.links a {
+    color: white;
+    text-decoration: underline;
+    font-style: italic;
+    opacity: 0.9;
+}
+
+/* Кнопка "Войти" */
+.auth-btn {
+    margin: 0 auto;
+    margin-top: 55px;
+    width: 50%; /* Оптимальная ширина кнопки */
+    height: 55px;
+    background: rgba(204, 188, 201, 0.9);
+    border: none;
+    border-radius: 40px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+    color: black;
+    font-size: 20px;
+    font-style: italic;
+    font-weight: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.auth-btn:hover {
+    background: rgba(175, 160, 170, 0.9);
+}
+
+.auth-btn i {
+    margin-left: 10px;
+    font-size: 20px;
+}
+
+
+/* Контейнер формы регистрации */
+.register-container {
+    width: 450px; /* Ширина контейнера */
+    max-width: 90%; /* Адаптивность */
+    background: rgba(35, 35, 63, 0.7); /* Полупрозрачный фон */
+    border-radius: 40px; /* Закругленные углы */
+    padding: 30px 25px; /* Внутренние отступы */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Заголовок */
+.register-header {
+    color: white;
+    font-size: 32px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    padding-bottom: 10px;
+}
+
+/* Поля ввода */
+.form-group-register {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.form-group-register input, .form-group-register select {
+    width: 100%;
+    height: 55px;
+    padding: 10px 15px 10px 55px;
+    font-size: 18px;
+    border: none;
+    border-radius: 12px;
+    background: rgba(241, 220, 218, 0.5);
+    color: black;
+    font-style: italic;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.form-group-register i {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 22px;
+}
+
+/* Ссылка "Уже есть аккаунт?" */
+.account-link a {
+    
+    color: white;
+    font-style: italic;
+    text-decoration: underline;
+    opacity: 0.9;
+    margin-top: -10px;
+}
+
+/* Кнопка регистрации */
+.register-btn {
+    margin: 0 auto;
+    margin-top: 20px;
+    width: 75%;
+    height: 55px;
+    background: rgba(204, 188, 201, 0.9);
+    border: none;
+    border-radius: 40px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+    color: black;
+    font-size: 20px;
+    font-style: italic;
+    font-weight: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.register-btn:hover {
+    background: rgba(175, 160, 170, 0.9);
+}
+
+.register-btn i {
+    margin-left: 10px;
+    font-size: 20px;
+}
