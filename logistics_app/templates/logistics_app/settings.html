@@ -1,0 +1,52 @@
+{% extends 'logistics_app/base.html' %}
+{% load static %}
+
+{% block title %}Настройки{% endblock %}
+
+{% block content %}
+<div class="settings-page">
+    <h1  class="cargo-title">Настройки</h1>
+    <div class="settings-container">
+        <!-- Блок обновления данных -->
+        <div class="settings-block">
+            <h2>Обновление данных</h2>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="username">Логин:</label>
+                    {{ user_form.username }}
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    {{ user_form.email }}
+                </div>
+                <button type="submit" name="update_user" class="settings-button">
+                    Обновить <i class="fas fa-sync-alt"></i>
+                </button>
+            </form>
+        </div>
+        <!-- Блок смены пароля -->
+        <div class="settings-block">
+            <h2>Смена пароля</h2>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="old_password">Старый пароль:</label>
+                    {{ password_form.old_password }}
+                </div>
+                <div class="form-group">
+                    <label for="new_password1">Новый пароль:</label>
+                    {{ password_form.new_password1 }}
+                </div>
+                <div class="form-group">
+                    <label for="new_password2">Повторите пароль:</label>
+                    {{ password_form.new_password2 }}
+                </div>
+                <button type="submit" name="change_password" class="settings-button">
+                    Сменить пароль <i class="fas fa-sync-alt"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

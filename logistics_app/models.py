@@ -10,6 +10,7 @@ from django.db import models
 
 
 class CustomUser(AbstractUser):
+    profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
     role = models.CharField(
         max_length=20,
         choices=[
@@ -108,6 +109,7 @@ class Client(models.Model):
 
 
 class Crew(models.Model):
+    id = models.BigAutoField(primary_key=True)
     POST_CHOICES = [
         ('Капитан', 'Капитан'),
         ('Сотрудник', 'Сотрудник'),

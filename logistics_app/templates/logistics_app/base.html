@@ -5,8 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Логистика{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{% static 'images/favicon64x64.png' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/pages.css' %}">
 
 
         
@@ -25,8 +27,10 @@
 
     <!-- Навигационная панель -->
     <nav class="navbar">
-        <div class="logo">
-            <a href="{% url 'index' %}">Лого</a>
+        <div class="logo-container">
+            <a href="{% url 'index' %}">
+                <img src="{% static 'images/logo.png' %}" alt="Логотип" class="logo">
+            </a>
         </div>
         <div>
             {% for item in menu %}
@@ -43,11 +47,11 @@
             {% endfor %}
         </div>
         <div class="profile">
-            <img src="{% static 'images/profile_placeholder.png' %}" alt="Profile">
+            <img src="{% static 'images/profile_placeholder.jpg' %}" alt="Profile">
             <span>{{ user.username }}<i class="fas fa-chevron-down"></i></span>
             <div class="profile-dropdown">
-                <a href="#">Профиль</a>
-                <a href="#">Настройки</a>
+                <a href="{% url 'user_profile' %}">Профиль</a>
+                <a href="{% url 'user_settings' %}">Настройки</a>
                 <a href="{% url 'logout' %}">Выход</a>
             </div>
         </div>

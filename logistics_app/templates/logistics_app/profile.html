@@ -1,0 +1,50 @@
+{% extends 'logistics_app/base.html' %}
+{% load static %}
+
+{% block title %}Профиль{% endblock %}
+
+{% block content %}
+<div class="profile-wrapper">
+    <h1 class="profile-title">Профиль</h1>
+    
+    <div class="profile-container">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="profile-content">
+                <!-- Аватар пользователя -->
+                <div class="profile-avatar-section">
+                    <div class="profile-avatar">
+                        <img class="avatar-img" src="{% if user.profile_image %}{{ MEDIA_URL }}{{ user.profile_image }}{% else %}{% static 'images/profile_placeholder.jpg' %}{% endif %}" alt="Аватар">
+                    </div>
+                    <label for="file-input" class="upload-btn">Загрузить</label>
+                    <input id="file-input" type="file" name="profile_image" class="hidden-input">
+                    
+                </div>
+
+                <!-- Информация о пользователе -->
+                <div class="info-section">
+                    <p><strong>Логин:</strong> {{ user.username }}</p>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                    <p><strong>Дата регистрации:</strong> {{ user.date_joined|date:"d.m.Y" }}</p>
+                </div>
+            </div>
+
+            <!-- Кнопка сохранения -->
+            <div class="edit-button-container">
+                <button type="submit" class="edit-profile-btn">
+                    <i class="fas fa-save"></i> Сохранить изменения
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

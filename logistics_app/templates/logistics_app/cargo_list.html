@@ -1,111 +1,291 @@
 {% extends 'logistics_app/base.html' %}
 {% load static %}
+
+{% block title %}Грузы{% endblock %}
+
 {% block content %}
-
-<h2>Список грузов</h2>
-
-<!-- Кнопка для добавления нового груза -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCargoModal">
-    Добавить груз
-</button>
-
-<!-- Таблица с грузами -->
-<table class="table mt-3">
-    <thead>
-        <tr>
-            <th>Название</th>
-            <th>Описание</th>
-            <th>Стоимость</th>
-            <th>Единица измерения</th>
-            <th>Застрахованная стоимость</th>
-            <th>Действия</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for cargo in cargos %}
-        <tr>
-            <td>{{ cargo.name }}</td>
-            <td>{{ cargo.description }}</td>
-            <td>{{ cargo.declared_value }}</td>
-            <td>{{ cargo.unit_of_measurement.name }}</td>
-            <td>{{ cargo.insured_value }}</td>
-            <td>
-                <!-- Кнопка для детального просмотра -->
-                <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#cargoDetailModal{{ cargo.id }}">
-                    Подробнее
-                </button>
-                <!-- Кнопка для редактирования груза -->
-                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editCargoModal{{ cargo.id }}">
-                    Редактировать
-                </button>
-            </td>
-        </tr>
-        
-        <!-- Модальное окно для детального просмотра груза -->
-        <div class="modal fade" id="cargoDetailModal{{ cargo.id }}" tabindex="-1" aria-labelledby="cargoDetailModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Детали груза: {{ cargo.name }}</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p><strong>Описание:</strong> {{ cargo.description }}</p>
-                        <p><strong>Объявленная стоимость:</strong> {{ cargo.declared_value }}</p>
-                        <p><strong>Единица измерения:</strong> {{ cargo.unit_of_measurement.name }}</p>
-                        <p><strong>Застрахованная стоимость:</strong> {{ cargo.insured_value }}</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                    </div>
-                </div>
-            </div>
+<div class="cargo-container">
+    <!-- Заголовок и кнопка добавления -->
+    <h1 class="cargo-title">Грузы</h1>
+    <div class="header-container">
+        <div class="add-cargo-button">
+            <button class="button-add" onclick="openModal('add-cargo-modal')">Добавить груз <i class="fas fa-plus"></i></button>
         </div>
-        <!-- Модальное окно для редактирования груза -->
-        <div class="modal fade" id="editCargoModal{{ cargo.id }}" tabindex="-1" aria-labelledby="editCargoModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Редактировать груз</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form method="post" action="{% url 'edit_cargo' cargo.id %}">
-                        {% csrf_token %}
-                        <div class="modal-body">
-                            {{ cargo_form.as_p }}
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                            <button type="submit" class="btn btn-success">Сохранить изменения</button>
-                        </div>
-                    </form>
+        <!-- Форма поиска -->
+        <div class="search-container">
+            <form method="get" action="{% url 'cargo_list' %}">
+                <div class="search-wrapper">
+                    <input type="text" name="q" placeholder="Поиск..." value="{{ query }}" class="search-input">
+                    <button type="submit" class="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
                 </div>
-            </div>
-        </div>
-        {% endfor %}
-    </tbody>
-</table>
-
-<!-- Модальное окно для добавления нового груза -->
-<div class="modal fade" id="addCargoModal" tabindex="-1" aria-labelledby="addCargoModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Добавить груз</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form method="post" action="{% url 'add_cargo' %}">
-                {% csrf_token %}
-                <div class="modal-body">
-                    {{ cargo_form.as_p }}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                    <button type="submit" name= "add-cargo" class="btn btn-primary">Добавить</button>
-                </div>
+                <!-- Сохранение текущей сортировки -->
+                <input type="hidden" name="sort" value="{{ current_sort }}">
+                <input type="hidden" name="order" value="{{ current_order }}">
             </form>
+        </div>
+    </div>
+    
+    
+    <!-- Таблица с грузами -->
+    <div class="cargo-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        Название
+                        <a href="?sort=name&order={% if current_sort == 'name' and current_order == 'asc' %}desc{% else %}asc{% endif %}">
+                            {% if current_sort == 'name' %}
+                                <i class="fas {% if current_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></i>
+                            {% else %}
+                                <i class="fas fa-sort"></i>
+                            {% endif %}
+                        </a>
+                    </th>
+                    <th>
+                        Описание
+                        <a href="?sort=description&order={% if current_sort == 'description' and current_order == 'asc' %}desc{% else %}asc{% endif %}">
+                            {% if current_sort == 'description' %}
+                                <i class="fas {% if current_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></i>
+                            {% else %}
+                                <i class="fas fa-sort"></i>
+                            {% endif %}
+                        </a>
+                    </th>
+                    <th>
+                        Заявленная величина
+                        <a href="?sort=declared_value&order={% if current_sort == 'declared_value' and current_order == 'asc' %}desc{% else %}asc{% endif %}">
+                            {% if current_sort == 'declared_value' %}
+                                <i class="fas {% if current_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></i>
+                            {% else %}
+                                <i class="fas fa-sort"></i>
+                            {% endif %}
+                        </a>
+                    </th>
+                    <th>
+                        Застрахованная величина
+                        <a href="?sort=insured_value&order={% if current_sort == 'insured_value' and current_order == 'asc' %}desc{% else %}asc{% endif %}">
+                            {% if current_sort == 'insured_value' %}
+                                <i class="fas {% if current_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></i>
+                            {% else %}
+                                <i class="fas fa-sort"></i>
+                            {% endif %}
+                        </a>
+                    </th>
+                    <th>
+                        Ед. измерения
+                        <a href="?sort=unit_of_measurement__name&order={% if current_sort == 'unit_of_measurement__name' and current_order == 'asc' %}desc{% else %}asc{% endif %}">
+                            {% if current_sort == 'unit_of_measurement__name' %}
+                                <i class="fas {% if current_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></i>
+                            {% else %}
+                                <i class="fas fa-sort"></i>
+                            {% endif %}
+                        </a>
+                    </th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            
+            
+            <tbody>
+                {% if messages %}
+                    <div class="messages">
+                        {% for message in messages %}
+                            <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% for cargo in page_obj %}
+                <tr>
+                    <td>{{ cargo.name }}</td>
+                    <!-- Описание с ограничением и модальным окном -->
+                    <td class="cargo-description">
+                        {{ cargo.description|truncatechars:45 }}
+                    </td>
+                    <td>{{ cargo.declared_value }}</td>
+                    <td>{{ cargo.insured_value }}</td>
+                    <td>{{ cargo.unit_of_measurement }}</td>
+                    <td class="actions">
+                        <a href="#" onclick="openDetailModal('{{ cargo.name }}', '{{ cargo.description }}', '{{ cargo.declared_value }}', '{{ cargo.insured_value }}', '{{ cargo.unit_of_measurement }}')">
+                            <i class="fas fa-info-circle"></i>
+                        </a>
+                        <a href="#" onclick="openModal('edit-cargo-modal-{{ cargo.id }}')">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="#" onclick="openModal('delete-cargo-modal{{ cargo.id }}')">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </td>
+                </tr>
+
+                <!-- Модальное окно редактирования для каждого объекта -->
+                <div class="modal-overlay" id="edit-cargo-modal-{{ cargo.id }}">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Редактирование груза</h3>
+                            <button class="modal-close" onclick="closeModal('edit-cargo-modal-{{ cargo.id }}')">&times;</button>
+                        </div>
+                        <form method="post" action="{% url 'edit_cargo' cargo.id %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label>Название</label>
+                                <input type="text" name="name" value="{{ cargo.name }}" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Описание</label>
+                                <textarea name="description" rows="3" class="form-control">{{ cargo.description }}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Заявленная величина</label>
+                                <input type="text" name="declared_value" value="{{ cargo.declared_value }}" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Застрахованная величина</label>
+                                <input type="text" name="insured_value" value="{{ cargo.insured_value }}" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="unit-of-measurement-{{ cargo.id }}">Ед. измерения</label>
+                                <select name="unit_of_measurement" id="unit-of-measurement-{{ cargo.id }}" class="form-control">
+                                    {% for unit in units %}
+                                        <option value="{{ unit.id }}" {% if unit == cargo.unit_of_measurement %}selected{% endif %}>
+                                            {{ unit.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="modal-actions">
+                                <button type="submit" class="button-save">Сохранить</button>
+                                <button type="button" class="button-cancel" onclick="closeModal('edit-cargo-modal-{{ cargo.id }}')">Отмена</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Модальное окно для удаления груза -->
+                <div class="modal-overlay" id="delete-cargo-modal{{ cargo.id }}">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Удалить груз</h3>
+                            <button class="modal-close" onclick="closeModal('delete-cargo-modal{{ cargo.id }}')">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Вы уверены, что хотите удалить груз <strong>{{ cargo.name }}</strong>?</p>
+                        </div>
+                        <div class="modal-actions">
+                            <form method="post" action="{% url 'delete_cargo' cargo.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="button-save">Удалить</button>
+                                <button type="button" class="button-cancel" onclick="closeModal('delete-cargo-modal{{ cargo.id }}')">Отмена</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Пагинация -->
+<div class="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?page=1{% if query %}&q={{ query }}{% endif %}&sort={{ current_sort }}&order={{ current_order }}">&laquo;&laquo;</a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}&sort={{ current_sort }}&order={{ current_order }}">&laquo;</a>
+    {% else %}
+        <span class="disabled">&laquo;&laquo;</span>
+        <span class="disabled">&laquo;</span>
+    {% endif %}
+
+    <span class="current">
+        Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+    </span>
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}&sort={{ current_sort }}&order={{ current_order }}">&raquo;</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}&sort={{ current_sort }}&order={{ current_order }}">&raquo;&raquo;</a>
+    {% else %}
+        <span class="disabled">&raquo;</span>
+        <span class="disabled">&raquo;&raquo;</span>
+    {% endif %}
+</div>
+
+
+<!-- Модальное окно для добавления груза -->
+<div class="modal-overlay" id="add-cargo-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Добавить груз</h3>
+            <button class="modal-close" onclick="closeModal('add-cargo-modal')">&times;</button>
+        </div>
+        <form method="post" action="{% url 'add_cargo' %}">
+            {% csrf_token %}
+            <div class="form-group" class="numeric-input">
+                {{ cargo_form.as_p }}
+            </div>
+            <div class="modal-actions">
+                <button type="submit" name='add-cargo'class="button-save">Добавить</button>
+                <button type="button" class="button-cancel" onclick="closeModal('add-cargo-modal')">Отмена</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Модальное окно для просмотра подробностей -->
+<div class="modal-overlay" id="detail-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Детали груза</h3>
+            <button class="modal-close" onclick="closeModal('detail-modal')">&times;</button>
+        </div>
+        <p><strong>Название:</strong> <span id="detail-name"></span></p>
+        <p><strong>Описание:</strong> <span id="detail-description"></span></p>
+        <p><strong>Заявленная величина:</strong> <span id="detail-declared"></span></p>
+        <p><strong>Застрахованная величина:</strong> <span id="detail-insured"></span></p>
+        <p><strong>Ед. измерения:</strong> <span id="detail-unit"></span></p>
+        <div class="modal-actions">
+            <button type="button" class="button-cancel" onclick="closeModal('detail-modal')">Закрыть</button>
         </div>
     </div>
 </div>
 
+<script>
+    // Универсальная функция открытия модального окна
+    function openModal(modalId) {
+        document.getElementById(modalId).classList.add('active');
+    }
+
+    // Универсальная функция закрытия модального окна
+    function closeModal(modalId) {
+        document.getElementById(modalId).classList.remove('active');
+    }
+
+    
+
+    // Закрытие по клику на фон
+    window.onclick = function(event) {
+        const overlays = document.querySelectorAll('.modal-overlay');
+        overlays.forEach(overlay => {
+            if (event.target === overlay) {
+                overlay.classList.remove('active');
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Получаем все поля с классом "numeric-input"
+        const numericInputs = document.querySelectorAll('.numeric-input');
+    
+        numericInputs.forEach(input => {
+            input.addEventListener('input', function () {
+                // Заменяем запятую на точку в реальном времени
+                this.value = this.value.replace(',', '.');
+            });
+        });
+    });
+    
+</script>
 {% endblock %}

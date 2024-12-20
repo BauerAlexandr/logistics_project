@@ -1,0 +1,439 @@
+/*CARGO*/
+/* Контейнер */
+.cargo-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+.cargo-title {
+    font-size: 2.5em;
+    margin-bottom: 15px;
+    color: white;
+}
+
+/* Кнопка добавления */
+.add-cargo-button {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.button-add {
+    padding: 10px 20px;
+    background-color: #6c63ff;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.button-add i {
+    margin-left: 5px;
+}
+
+.button-add:hover {
+    background-color: #554cd6;
+}
+
+/* Пагинация */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px auto;
+    padding: 10px;
+    gap: 8px;
+}
+
+.pagination a, .pagination span {
+    display: inline-block;
+    padding: 10px 15px;
+    font-size: 1em;
+    color: white;
+    background-color: rgba(50, 50, 80, 0.85);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.pagination a:hover {
+    background-color: rgba(108, 99, 255, 0.8);
+    color: #fff;
+    border: 1px solid #554cd6;
+}
+
+.pagination .current {
+    background-color: #6c63ff;
+    color: white;
+    font-weight: bold;
+    border-radius: 8px;
+}
+
+.pagination .disabled {
+    background-color: rgba(50, 50, 80, 0.4);
+    color: gray;
+    cursor: not-allowed;
+    border-radius: 8px;
+}
+
+
+/* Таблица */
+.cargo-table table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 15px; /* Расстояние между строками */
+    color: white;
+}
+
+.cargo-table th, .cargo-table td {
+    padding: 20px 15px; /* Увеличенные отступы для высоты строк */
+    text-align: center;
+    border: none;
+}
+
+.cargo-table td {
+    text-align: center; /* Выравниваем текст по центру */
+    vertical-align: middle; /* Выравниваем текст по вертикали */
+     /* Запрещаем перенос текста */
+    overflow: hidden; /* Скрываем лишний текст */
+    text-overflow: ellipsis; /* Добавляем многоточие для обрезанного текста */
+    max-width: 250px; /* Ограничиваем максимальную ширину */
+    box-sizing: border-box;
+    word-break: break-word;
+}
+
+.cargo-table th {
+    background-color: rgba(50, 50, 80, 0.85);
+    color: #fff;
+    font-weight: bold;
+    text-align: center; /* Центрируем заголовки */
+    vertical-align: middle;
+}
+
+/* Заголовок таблицы с закругленными углами */
+.cargo-table th:first-child {
+    border-top-left-radius: 13px; /* Левый верхний угол */
+    border-bottom-left-radius: 13px; /* Левый нижний угол */
+}
+
+.cargo-table th:last-child {
+    border-top-right-radius: 13px; /* Правый верхний угол */
+    border-bottom-right-radius: 13px; /* Правый нижний угол */
+}
+
+.cargo-table tbody tr {
+    background-color: rgba(71, 71, 89, 0.7);
+    overflow: hidden; /* Обрезка содержимого за пределами закругления */
+    line-height: 2.2;
+}
+
+
+.cargo-table tbody tr td:first-child {
+    border-top-left-radius: 13px; /* Левый верхний угол */
+    border-bottom-left-radius: 13px; /* Левый нижний угол */
+}
+
+.cargo-table tbody tr td:last-child {
+    border-top-right-radius: 13px; /* Правый верхний угол */
+    border-bottom-right-radius: 13px; /* Правый нижний угол */
+}
+
+.cargo-description {
+    max-width: 250px; /* Максимальная ширина */
+    overflow: hidden; /* Обрезаем текст, который не помещается */
+    text-overflow: ellipsis; /* Добавляем многоточие */
+    padding: 10px; /* Внутренние отступы */
+    box-sizing: border-box; /* Учитываем отступы в расчете ширины */
+    word-break: break-word; /* Разбиваем длинные слова */
+}
+
+
+/* Действия */
+.actions a {
+    margin: 0 8px;
+    color: white;
+    font-size: 1.2em;
+    text-decoration: none;
+}
+
+.actions a:hover {
+    color: #d4d4ff;
+}
+
+
+/* Оверлей модального окна */
+/* Основной стиль для модального окна */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: none; /* Скрываем модальное окно изначально */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal-overlay.active {
+    display: flex; /* Отображение при добавлении класса active */
+}
+
+
+.modal-content {
+    background-color: #2c2c3e; /* Цвет фона */
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 400px;
+    color: white;
+}
+
+/* Заголовок модального окна */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #444;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.2em;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+/* Группы формы */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+    font-weight: 300;
+    color: #b0b0b5; /* Светло-серый цвет текста */
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    background-color: #3b3b4f; /* Темный фон */
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 1em;
+    box-sizing: border-box;
+}
+
+.form-group textarea {
+    resize: none; /* Запрет на изменение размеров */
+}
+
+/* Кнопки */
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.button-save {
+    background-color: #6c63ff;
+    color: white;
+}
+
+.button-save,
+.button-cancel {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 500;
+}
+
+
+
+.button-cancel {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.button-save:hover {
+    background-color: #554cd6;
+}
+
+.button-cancel:hover {
+    background-color: #d62c1a;
+}
+
+/* Стили для выпадающего списка */
+select {
+    appearance: none; /* Убираем стандартный стиль браузера */
+    background-color: #3b3b4f;
+    color: white;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 1em;
+    outline: none;
+    width: 100%; /* Полная ширина контейнера */
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+/* Ховер для выпадающего списка */
+select:hover {
+    border-color: #6c63ff;
+}
+
+select:focus {
+    border-color: #6c63ff;
+    box-shadow: 0 0 5px rgba(108, 99, 255, 0.5);
+}
+
+
+/* Описание в модальном окне */
+#detail-description {
+    word-wrap: break-word; /* Перенос длинных слов */
+    overflow-wrap: break-word; /* Альтернативный вариант для современных браузеров */
+    max-width: 100%; /* Ограничение по ширине */
+    white-space: normal; /* Обычный перенос строк */
+    margin-bottom: 10px; /* Отступ снизу */
+}
+
+
+/* Стили кнопок удаления и подтверждения */
+
+
+.button-cancel {
+    background-color: #95a5a6;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.button-cancel:hover {
+    background-color: #7f8c8d;
+}
+
+.alert {
+    padding: 10px 20px;
+    margin: 10px 0;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+.alert-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.alert-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.alert-info {
+    background-color: #17a2b8;
+    color: white;
+}
+
+th a {
+    color: white !important; /* Сделать цвет белым */
+    text-decoration: none !important;
+    margin-left: 5px !important; /* Отступ между текстом и иконкой */
+}
+
+th i {
+    font-size: 1.5em !important; /* Увеличенный размер иконок */
+    color: white !important;
+    vertical-align: middle !important;
+}
+
+th a:hover i {
+    color: #d4d4d4 !important; /* Цвет иконок при наведении */
+}
+
+
+/* Общий контейнер поиска */
+.search-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 15px;
+}
+
+/* Обёртка для поля ввода и кнопки */
+.search-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    border: 3px solid #2c2c3e; /* Тёмный контур */
+    border-radius: 25px;
+    padding: 2px;
+    background-color: #3b3b4f; /* Фон ввода */
+    max-width: 250px;
+}
+
+/* Поле ввода */
+.search-input {
+    width: 100%;
+    padding: 10px 15px;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    color: #ffffff;
+    font-size: 1em;
+}
+
+/* Плейсхолдер */
+.search-input::placeholder {
+    color: #d4d4ff;
+    font-weight: bold;
+}
+
+/* Кнопка поиска */
+.search-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #d4d4ff;
+    margin-right: 10px;
+    font-size: 1.2em;
+    outline: none;
+    position: absolute;
+    right: 5px;
+}
+
+/* Иконка поиска */
+.search-button i {
+    font-weight: 900; /* Толстая иконка */
+}
+
+.search-button:hover {
+    color: #ffffff;
+}
+
+
+/* Контейнер для заголовка */
+.header-container {
+    display: flex; /* Включаем Flexbox */
+    justify-content: space-between; /* Равномерно распределяем элементы */
+    align-items: center; /* Выравниваем элементы по центру по вертикали */
+    margin-bottom: 20px; /* Отступ снизу */
+}

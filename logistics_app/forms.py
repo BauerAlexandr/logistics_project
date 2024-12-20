@@ -1,9 +1,30 @@
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from django import forms
 from .models import Client, Ship, Cargo, Route, Pier, Bank, City, Crew, Port, Service, Shiptype
 from .models import CustomUser, Status, Street, Cargobatch, Unitofmeasurement, Summary, Transportation
 
+
+class UserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'email', 'profile_image']
+        widgets = {
+            'profile_image': forms.FileInput(attrs={'class': 'form-control'}),
+        }
+
+class UpdateUserForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'email']  # Поля для редактирования
+        labels = {
+            'username': 'Логин',
+            'email': 'Email',
+        }
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+        }
 
 class UserRegistrationForm(UserCreationForm):
     ROLE_CHOICES = [
@@ -72,21 +93,50 @@ class ShipForm(forms.ModelForm):
             'ship_type': 'Тип судна',
             'crew_captain': 'Капитан'
         }
+        widgets = {
+            'photo': forms.FileInput(attrs={'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(ShipForm, self).__init__(*args, **kwargs)
+        # Фильтруем только сотрудников из экипажа
+        self.fields['crew_captain'].queryset = Crew.objects.filter(post='Капитан')
 
 class CargoForm(forms.ModelForm):
     class Meta:
         model = Cargo
         fields = ['name', 'description', 'declared_value', 'unit_of_measurement', 'insured_value']
         labels = {
-            'name': 'Название груза',
+            'name': 'Название',
             'description': 'Описание',
-            'declared_value': 'Объявленная стоимость',
-            'unit_of_measurement': 'Единица измерения',
-            'insured_value': 'Страховая стоимость'
+            'declared_value': 'Заявленная величина',
+            'unit_of_measurement': 'Ед. измерения',
+            'insured_value': 'Застрахованная величина'
         }
         widgets = {
             'description': forms.Textarea(attrs={'rows': 3}),
+            'unit_of_measurement': forms.Select(attrs={'class': 'form-control'}),
         }
+
+        
+
+        def clean_declared_value(self):
+            value = self.cleaned_data.get('declared_value')
+            if isinstance(value, str):
+                value = value.replace(',', '.')
+            try:
+                return float(value)
+            except ValueError:
+                raise forms.ValidationError("Пожалуйста, введите корректное вещественное число.")
+
+        def clean_insured_value(self):
+            value = self.cleaned_data.get('insured_value')
+            if isinstance(value, str):
+                value = value.replace(',', '.')
+            try:
+                return float(value)
+            except ValueError:
+                raise forms.ValidationError("Пожалуйста, введите корректное вещественное число.")
 
 class RouteForm(forms.ModelForm):
     class Meta:
@@ -191,6 +241,11 @@ class ServiceForm(forms.ModelForm):
             'ship': 'Судно',
             'crew_employee': 'Сотрудник'
         }
+
+    def __init__(self, *args, **kwargs):
+        super(ServiceForm, self).__init__(*args, **kwargs)
+        # Фильтруем только сотрудников из экипажа
+        self.fields['crew_employee'].queryset = Crew.objects.filter(post='Сотрудник')
 
 class ShipTypeForm(forms.ModelForm):
     class Meta:

@@ -1,111 +1,324 @@
 {% extends 'logistics_app/base.html' %}
 {% load static %}
+
+{% block title %}Корабли{% endblock %}
+
 {% block content %}
-
-<h2>Список кораблей</h2>
-
-<!-- Кнопка для добавления нового корабля -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addShipModal">
-    Добавить корабль
-</button>
-
-<!-- Таблица с кораблями -->
-<table class="table mt-3">
-    <thead>
-        <tr>
-            <th>Название</th>
-            <th>Регистрационный номер</th>
-            <th>Год постройки</th>
-            <th>Домашний порт</th>
-            <th>Действия</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for ship in ships %}
-        <tr>
-            <td>{{ ship.name }}</td>
-            <td>{{ ship.registration_number }}</td>
-            <td>{{ ship.year_built }}</td>
-            <td>{{ ship.home_port.name }}</td>
-            <td>
-                <!-- Кнопка для детального просмотра -->
-                <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#shipDetailModal{{ ship.id }}">
-                    Подробнее
-                </button>
-                <!-- Кнопка для открытия модального окна редактирования -->
-                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editShipModal{{ ship.id }}">
-                    Редактировать
-                </button>
-            </td>
-        </tr>
-        
-
-        <!-- Модальное окно для детального просмотра корабля -->
-        <div class="modal fade" id="shipDetailModal{{ ship.id }}" tabindex="-1" aria-labelledby="shipDetailModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Детали корабля: {{ ship.name }}</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p><strong>Регистрационный номер:</strong> {{ ship.registration_number }}</p>
-                        <p><strong>Год постройки:</strong> {{ ship.year_built }}</p>
-                        <p><strong>Емкость:</strong> {{ ship.capacity }}</p>
-                        <p><strong>Домашний порт:</strong> {{ ship.home_port.name }}</p>
-                        <p><strong>Тип корабля:</strong> {{ ship.ship_type.name }}</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                    </div>
-                </div>
-            </div>
+<div class="cargo-container">
+    <!-- Заголовок и кнопка добавления -->
+    <h1 class="cargo-title">Корабли</h1>
+    <div class="header-container">
+        <div class="add-cargo-button">
+            <button class="button-add" onclick="openModal('add-ship-modal')">Добавить корабль <i class="fas fa-plus"></i></button>
         </div>
-
-        <!-- Модальное окно редактирования -->
-        <div class="modal fade" id="editShipModal{{ ship.id }}" tabindex="-1" aria-labelledby="editShipModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Редактировать корабль</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form method="post" action="{% url 'edit_ship' ship.id %}">
-                        {% csrf_token %}
-                        <div class="modal-body">
-                            {{ ship_form.as_p }}
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
-                        </div>
-                    </form>
+        <!-- Форма поиска -->
+        <div class="search-container">
+            <form method="get" action="{% url 'ships_list' %}">
+                <div class="search-wrapper">
+                    <input type="text" name="q" placeholder="Поиск..." value="{{ query }}" class="search-input">
+                    <button type="submit" class="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
                 </div>
-            </div>
-        </div>
-        {% endfor %}
-    </tbody>
-    <!-- Модальное окно для добавления нового корабля -->
-    <div class="modal fade" id="addShipModal" tabindex="-1" aria-labelledby="addShipModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addShipModalLabel">Добавить новый корабль</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form method="post" action="{% url 'add_ship' %}">
-                    {% csrf_token %}
-                    <div class="modal-body">
-                        {{ ship_form.as_p }}
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                        <button type="submit"  name= "add-ship" class="btn btn-primary">Добавить</button>
-                    </div>
-                </form>
-            </div>
+                <input type="hidden" name="sort" value="{{ current_sort }}">
+                <input type="hidden" name="order" value="{{ current_order }}">
+            </form>
         </div>
     </div>
-</table>
 
+    <!-- Таблица -->
+    <div class="cargo-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Фото</th>
+                    <th>
+                        Название
+                        <a href="?sort=name&order={% if current_sort == 'name' and current_order == 'asc' %}desc{% else %}asc{% endif %}">
+                            {% if current_sort == 'name' %}
+                                <i class="fas {% if current_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></i>
+                            {% else %}
+                                <i class="fas fa-sort"></i>
+                            {% endif %}
+                        </a>
+                    </th>
+                    <th>Регистрационный номер
+                        <a href="?sort=registration_number&order={% if current_sort == 'registration_number' and current_order == 'asc' %}desc{% else %}asc{% endif %}">
+                            {% if current_sort == 'registration_number' %}
+                                <i class="fas {% if current_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></i>
+                            {% else %}
+                                <i class="fas fa-sort"></i>
+                            {% endif %}
+                        </a>
+                    </th>
+                    <th>Грузоподъемность
+                        <a href="?sort=capacity&order={% if current_sort == 'capacity' and current_order == 'asc' %}desc{% else %}asc{% endif %}">
+                            {% if current_sort == 'capacity' %}
+                                <i class="fas {% if current_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></i>
+                            {% else %}
+                                <i class="fas fa-sort"></i>
+                            {% endif %}
+                        </a>
+                    </th>
+                    <th>Год постройки
+                        <a href="?sort=year_built&order={% if current_sort == 'year_built' and current_order == 'asc' %}desc{% else %}asc{% endif %}">
+                            {% if current_sort == 'year_built' %}
+                                <i class="fas {% if current_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></i>
+                            {% else %}
+                                <i class="fas fa-sort"></i>
+                            {% endif %}
+                        </a>
+                    </th>
+                    <th>Капитан
+                        <a href="?sort=crew_captain__last_name&order={% if current_sort == 'crew_captain__last_name' and current_order == 'asc' %}desc{% else %}asc{% endif %}">
+                            {% if current_sort == 'crew_captain__last_name' %}
+                                <i class="fas {% if current_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></i>
+                            {% else %}
+                                <i class="fas fa-sort"></i>
+                            {% endif %}
+                        </a>
+                    </th>
+                    
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if messages %}
+                    <div class="messages">
+                        {% for message in messages %}
+                            <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% for ship in page_obj %}
+                <tr>
+                    <td>
+                        <img src="{{ MEDIA_URL }}{% if ship.photo %}{{ ship.photo }}{% else %}ship_placeholder.jpg{% endif %}" 
+                             alt="{{ ship.name }}" width="100" onclick="openModal('photo-modal-{{ ship.id }}')">
+                    </td>
+                    <td>{{ ship.name }}</td>
+                    <td>{{ ship.registration_number }}</td>
+                    <td>{{ ship.capacity }}</td>
+                    <td>{{ ship.year_built }}</td>
+                    <td>{{ ship.crew_captain }}</td>
+                    
+                    
+                    <!-- Модальное окно для управления фото -->
+                    <div class="modal-overlay" id="photo-modal-{{ ship.id }}">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3>Управление фото</h3>
+                                <button class="modal-close" onclick="closeModal('photo-modal-{{ ship.id }}')">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Текущее фото:</p>
+                                <img src="{{ MEDIA_URL }}{% if ship.photo %}{{ ship.photo }}{% else %}default/ship_placeholder.jpg{% endif %}" 
+                                     alt="{{ ship.name }}" width="200">
+                            </div>
+                            <form method="post" enctype="multipart/form-data" action="{% url 'edit_ship_photo' ship.id %}">
+                                {% csrf_token %}
+                                <div class="form-actions">
+                                    <button type="submit" name="delete-photo" class="button-save">Удалить фото</button>
+                                    <div class="form-group">
+                                        <label for="new-photo-{{ ship.id }}">Новое фото:</label>
+                                        <input type="file" name="photo" id="new-photo-{{ ship.id }}" class="form-control">
+                                    </div>
+                                    <button type="submit" name="update-photo" class="button-save">Обновить фото</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <td class="actions">
+                        <a href="#" onclick="openModal('detail-ship-modal-{{ ship.id }}')">
+                            <i class="fas fa-info-circle"></i>
+                        </a>
+                        <a href="#" onclick="openModal('edit-ship-modal-{{ ship.id }}')">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="#" onclick="openModal('delete-ship-modal-{{ ship.id }}')">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </td>
+                </tr>
+
+                <!-- Модальное окно подробностей -->
+                <div class="modal-overlay" id="detail-ship-modal-{{ ship.id }}">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Детали судна</h3>
+                            <button class="modal-close" onclick="closeModal('detail-ship-modal-{{ ship.id }}')">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <p><strong>Название:</strong> {{ ship.name }}</p>
+                            <p><strong>Регистрационный номер:</strong> {{ ship.registration_number }}</p>
+                            <p><strong>Грузоподъемность:</strong> {{ ship.capacity }}</p>
+                            <p><strong>Год постройки:</strong> {{ ship.year_built }}</p>
+                            <p><strong>Порт приписки:</strong> {{ ship.home_port }}</p>
+                            <p><strong>Тип судна:</strong> {{ ship.ship_type }}</p>
+                            <p><strong>Капитан:</strong> {{ ship.crew_captain }}</p>
+                        </div>
+                        <div class="modal-actions">
+                            <button type="button" class="button-cancel" onclick="closeModal('detail-ship-modal-{{ ship.id }}')">Закрыть</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Модальное окно редактирования -->
+                <div class="modal-overlay" id="edit-ship-modal-{{ ship.id }}">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Редактировать корабль</h3>
+                            <button class="modal-close" onclick="closeModal('edit-ship-modal-{{ ship.id }}')">&times;</button>
+                        </div>
+                        <form method="post" enctype="multipart/form-data" action="{% url 'edit_ship' ship.id %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label>Регистрационный номер</label>
+                                <input type="text" name="registration_number" value="{{ ship.registration_number }}" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Название</label>
+                                <input type="text" name="name" value="{{ ship.name }}" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Грузоподъемность</label>
+                                <input type="text" name="capacity" value="{{ ship.capacity }}" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Год постройки</label>
+                                <input type="text" name="year_built" value="{{ ship.year_built }}" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="photo-{{ ship.id }}">Фото</label>
+                                <input type="file" name="photo" id="photo-{{ ship.id }}" value="{{ ship.photo }}" class="form-control">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="home_port-{{ ship.id }}">Порт приписки</label>
+                                <select name="home_port" id="home_port-{{ ship.id }}" class="form-control">
+                                    {% for fkey in ports %}
+                                        <option value="{{ fkey.id }}" {% if fkey == ship.home_port %}selected{% endif %}>
+                                            {{ fkey.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="ship_type-{{ ship.id }}">Порт приписки</label>
+                                <select name="ship_type" id="ship_type-{{ ship.id }}" class="form-control">
+                                    {% for fkey in ship_types %}
+                                        <option value="{{ fkey.id }}" {% if fkey == ship.ship_type %}selected{% endif %}>
+                                            {{ fkey.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="crew_captain-{{ ship.id }}">Капитан</label>
+                                <select name="crew_captain" id="crew_captain-{{ ship.id }}" class="form-control">
+                                    {% for fkey in captains %}
+                                        <option value="{{ fkey.id }}" {% if fkey == ship.crew_captain %}selected{% endif %}>
+                                            {{ fkey.last_name }} {{ fkey.first_name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="modal-actions">
+                                <button type="submit" class="button-save">Сохранить</button>
+                                <button type="button" class="button-cancel" onclick="closeModal('edit-ship-modal-{{ ship.id }}')">Отмена</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Модальное окно удаления -->
+                <div class="modal-overlay" id="delete-ship-modal-{{ ship.id }}">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Удалить корабль</h3>
+                            <button class="modal-close" onclick="closeModal('delete-ship-modal-{{ ship.id }}')">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Вы уверены, что хотите удалить корабль <strong>{{ ship.name }}</strong>?</p>
+                        </div>
+                        <div class="modal-actions">
+                            <form method="post" action="{% url 'delete_ship' ship.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="button-save">Удалить</button>
+                                <button type="button" class="button-cancel" onclick="closeModal('delete-ship-modal-{{ ship.id }}')">Отмена</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Пагинация -->
+<div class="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?page=1{% if query %}&q={{ query }}{% endif %}&sort={{ current_sort }}&order={{ current_order }}">&laquo;&laquo;</a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}&sort={{ current_sort }}&order={{ current_order }}">&laquo;</a>
+    {% else %}
+        <span class="disabled">&laquo;&laquo;</span>
+        <span class="disabled">&laquo;</span>
+    {% endif %}
+
+    <span class="current">
+        Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+    </span>
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}&sort={{ current_sort }}&order={{ current_order }}">&raquo;</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}&sort={{ current_sort }}&order={{ current_order }}">&raquo;&raquo;</a>
+    {% else %}
+        <span class="disabled">&raquo;</span>
+        <span class="disabled">&raquo;&raquo;</span>
+    {% endif %}
+</div>
+
+<!-- Модальное окно добавления -->
+<div class="modal-overlay" id="add-ship-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Добавить корабль</h3>
+            <button class="modal-close" onclick="closeModal('add-ship-modal')">&times;</button>
+        </div>
+        <form method="post" enctype="multipart/form-data" action="{% url 'ships_list' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.as_p }}
+            </div>
+            <div class="modal-actions">
+                <button type="submit" name="add-ship" class="button-save">Добавить</button>
+                <button type="button" class="button-cancel" onclick="closeModal('add-ship-modal')">Отмена</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openModal(id) {
+        document.getElementById(id).classList.add('active');
+    }
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('active');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Получаем все поля с классом "numeric-input"
+        const numericInputs = document.querySelectorAll('.numeric-input');
+    
+        numericInputs.forEach(input => {
+            input.addEventListener('input', function () {
+                // Заменяем запятую на точку в реальном времени
+                this.value = this.value.replace(',', '.');
+            });
+        });
+    });
+</script>
 {% endblock %}
