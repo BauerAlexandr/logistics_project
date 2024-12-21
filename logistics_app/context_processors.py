@@ -52,7 +52,34 @@ def menu_context(request):
             "children": [
                 {"name": "Статусы", "url": "statuses_list"},
                 {"name": "Сводки", "url": "summaries_list"},
+                {"name": "Документы", "url": "documents"},
             ],
         },
     ]
     return {"menu": menu}
+
+
+def user_permissions(request):
+    """
+    Контекстный процессор для передачи разрешений пользователя в шаблоны.
+    """
+    if request.user.is_authenticated:
+        # Получаем все разрешения пользователя
+        permissions = request.user.get_all_permissions()
+
+        # Разделяем на группы
+        add_permissions = {perm.split('.')[1] for perm in permissions if perm.startswith('logistics_app.add_')}
+        change_permissions = {perm.split('.')[1] for perm in permissions if perm.startswith('logistics_app.change_')}
+        delete_permissions = {perm.split('.')[1] for perm in permissions if perm.startswith('logistics_app.delete_')}
+
+        return {
+            'add_permissions': add_permissions,
+            'change_permissions': change_permissions,
+            'delete_permissions': delete_permissions,
+        }
+
+    return {
+        'add_permissions': set(),
+        'change_permissions': set(),
+        'delete_permissions': set(),
+    }

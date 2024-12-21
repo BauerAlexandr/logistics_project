@@ -68,6 +68,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'logistics_app.context_processors.menu_context',
                 'django.template.context_processors.media',
+                'logistics_app.context_processors.user_permissions',
             ],
         },
     },
@@ -147,6 +148,14 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'bauer4921@gmail.com'
+EMAIL_HOST_PASSWORD = 'uhvm oqjq yaxr husl'
+DEFAULT_FROM_EMAIL = 'superultra@megaman.com'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Default primary key field type

@@ -7,15 +7,15 @@ body, html {
     background: url("../images/ship_background.jpg") no-repeat center center fixed;
     background-size: cover;
     display: flex;
-    justify-content: flex-start; /* Смещение влево */
-    align-items: center; /* Центрирование по вертикали */
-    padding-left: 3.5%; /* Увеличенный отступ слева для точного позиционирования */
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 3.5%; 
 }
 
 /* Контейнер формы */
 .auth-container {
-    width: 450px; /* Чуть больше ширина контейнера */
-    max-width: 90%; /* Адаптивность на маленьких экранах */
+    width: 450px;
+    max-width: 90%;
     background: rgba(35, 35, 63, 0.7);
     border-radius: 40px;
     padding: 30px 25px; /* Увеличенные отступы */
@@ -42,13 +42,13 @@ body, html {
 /* Поля ввода */
 .form-group-auth {
     position: relative;
-    margin-bottom: 40px; /* Увеличенный отступ между полями */
+    margin-bottom: 40px; 
 }
 
 .form-group-auth input {
     width: 100%;
-    height: 75px; /* Увеличенная высота поля */
-    padding: 10px 15px 10px 55px; /* Дополнительный отступ слева */
+    height: 75px; 
+    padding: 10px 15px 10px 55px; 
     font-size: 18px;
     border: none;
     border-radius: 12px;
@@ -87,7 +87,7 @@ body, html {
 .auth-btn {
     margin: 0 auto;
     margin-top: 55px;
-    width: 50%; /* Оптимальная ширина кнопки */
+    width: 50%;
     height: 55px;
     background: rgba(204, 188, 201, 0.9);
     border: none;
@@ -116,10 +116,10 @@ body, html {
 
 /* Контейнер формы регистрации */
 .register-container {
-    width: 450px; /* Ширина контейнера */
-    max-width: 90%; /* Адаптивность */
-    background: rgba(35, 35, 63, 0.7); /* Полупрозрачный фон */
-    border-radius: 40px; /* Закругленные углы */
+    width: 450px;
+    max-width: 90%;
+    background: rgba(35, 35, 63, 0.7);
+    border-radius: 40px; 
     padding: 30px 25px; /* Внутренние отступы */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
     box-sizing: border-box;
@@ -206,4 +206,36 @@ body, html {
 .register-btn i {
     margin-left: 10px;
     font-size: 20px;
+}
+
+
+.messages {
+    margin: 15px 0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.alert {
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
 }

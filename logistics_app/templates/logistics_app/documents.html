@@ -1,0 +1,53 @@
+{% extends 'logistics_app/base.html' %}
+{% load static %}
+
+{% block title %}Документы{% endblock %}
+
+{% block content %}
+<div class="documents-container">
+    <h1 class="documents-title">Документы</h1>
+    
+    <!-- Форма для отправки запроса -->
+    <form method="post" action="{% url 'documents' %}" class="query-form">
+        {% csrf_token %}
+        <textarea name="query" placeholder="Введите SQL-запрос здесь..." required>{{ query|default_if_none:'' }}</textarea>
+        <div class="form-actions">
+            <button type="submit" class="execute-btn">Выполнить запрос</button>
+            {% if results %}
+            <button type="submit" name="export" value="export" class="export-btn">Экспортировать в файл</button>
+            {% endif %}
+        </div>
+    </form>
+    
+    <!-- Отображение ошибок -->
+    {% if error %}
+    <div class="error-message">
+        {{ error }}
+    </div>
+    {% endif %}
+    
+    <!-- Результаты -->
+    {% if results %}
+    <div class="results-container">
+        <table>
+            <thead>
+                <tr>
+                    {% for column in results.columns %}
+                    <th>{{ column }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in results.rows %}
+                <tr>
+                    {% for cell in row %}
+                    <td>{{ cell }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

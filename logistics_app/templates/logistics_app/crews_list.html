@@ -8,9 +8,11 @@
     <!-- Заголовок и кнопка добавления -->
     <h1 class="cargo-title">Экипаж</h1>
     <div class="header-container">
-        <div class="add-cargo-button">
-            <button class="button-add" onclick="openModal('add-crew-modal')">Добавить члена экипажа <i class="fas fa-plus"></i></button>
-        </div>
+        {% if 'add_crew' in add_permissions %}
+            <div class="add-cargo-button">
+                <button class="button-add" onclick="openModal('add-crew-modal')">Добавить экипаж <i class="fas fa-plus"></i></button>
+            </div>
+        {% endif %}
         <!-- Форма поиска -->
         <div class="search-container">
             <form method="get" action="{% url 'crews_list' %}">
@@ -91,12 +93,17 @@
                         <a href="#" onclick="openModal('detail-crew-modal-{{ crew.id }}')">
                             <i class="fas fa-info-circle"></i>
                         </a>
-                        <a href="#" onclick="openModal('edit-crew-modal-{{ crew.id }}')">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <a href="#" onclick="openModal('delete-crew-modal-{{ crew.id }}')">
-                            <i class="fas fa-trash-alt"></i>
-                        </a>
+                        {% if 'change_crew' in change_permissions %}
+                            <a href="#" onclick="openModal('edit-crew-modal-{{ crew.id }}')">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        {% endif %}
+
+                        {% if 'delete_crew' in delete_permissions %}
+                            <a href="#" onclick="openModal('delete-crew-modal{{ crew.id }}')">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        {% endif %}
                     </td>
                 </tr>
 

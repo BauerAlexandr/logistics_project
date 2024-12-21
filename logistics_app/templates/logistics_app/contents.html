@@ -1,0 +1,71 @@
+{% extends 'logistics_app/base.html' %}
+
+{% block title %}Оглавление{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="header-title">Оглавление</h1>
+
+    <div class="content-table">
+        <!-- Управление клиентами -->
+        <div class="section">
+            <h2 class="section-title"><i class="fas fa-users"></i> Управление клиентами</h2>
+            <ul class="section-list">
+                <li><a href="{% url 'clients_list' %}"><i class="fas fa-users"></i> Клиенты</a> — Просмотр и управление клиентами.</li>
+                <li><a href="{% url 'banks_list' %}"><i class="fas fa-university"></i> Банки</a> — Управление информацией о банках.</li>
+            </ul>
+        </div>
+
+        <!-- География -->
+        <div class="section">
+            <h2 class="section-title"><i class="fas fa-map"></i> География</h2>
+            <ul class="section-list">
+                <li><a href="{% url 'cities_list' %}"><i class="fas fa-city"></i> Города</a> — Список добавленных городов.</li>
+                <li><a href="{% url 'streets_list' %}"><i class="fas fa-road"></i> Улицы</a> — Просмотр улиц.</li>
+                <li><a href="{% url 'ports_list' %}"><i class="fas fa-anchor"></i> Порты</a> — Информация о портах.</li>
+                <li><a href="{% url 'piers_list' %}"><i class="fas fa-warehouse"></i> Пирсы</a> — Просмотр и изменение причалов.</li>
+            </ul>
+        </div>
+
+        <!-- Флотилия -->
+        <div class="section">
+            <h2 class="section-title"><i class="fas fa-ship"></i> Флотилия</h2>
+            <ul class="section-list">
+                <li><a href="{% url 'ships_list' %}"><i class="fas fa-ship"></i> Судна</a> — Информация о судах.</li>
+                <li><a href="{% url 'shiptypes_list' %}"><i class="fas fa-tags"></i> Типы судов</a> — Просмотр и управление типами судов.</li>
+                <li><a href="{% url 'services_list' %}"><i class="fas fa-tools"></i> Обслуживание</a> — Управление сотрудниками.</li>
+                <li><a href="{% url 'crews_list' %}"><i class="fas fa-user-tie"></i> Экипажи</a> — Управление экипажами.</li>
+            </ul>
+        </div>
+
+        <!-- Навигация -->
+        <div class="section">
+            <h2 class="section-title"><i class="fas fa-route"></i> Навигация</h2>
+            <ul class="section-list">
+                <li><a href="{% url 'routes_list' %}"><i class="fas fa-map-signs"></i> Маршруты</a> — Список маршрутов.</li>
+                <li><a href="{% url 'transportations_list' %}"><i class="fas fa-truck"></i> Перевозки</a> — Управление перевозками.</li>
+            </ul>
+        </div>
+
+        <!-- Грузы -->
+        <div class="section">
+            <h2 class="section-title"><i class="fas fa-boxes"></i> Грузы</h2>
+            <ul class="section-list">
+                <li><a href="{% url 'cargo_list' %}"><i class="fas fa-box"></i> Грузы</a> — Просмотр и управление грузами.</li>
+                <li><a href="{% url 'unitofmeasurements_list' %}"><i class="fas fa-balance-scale"></i> Единицы измерения</a> — Просмотр и управление.</li>
+                <li><a href="{% url 'cargobatches_list' %}"><i class="fas fa-box-open"></i> Партии грузов</a> — Управление партиями грузов.</li>
+            </ul>
+        </div>
+
+        <!-- Отчеты -->
+        <div class="section">
+            <h2 class="section-title"><i class="fas fa-file-alt"></i> Отчеты</h2>
+            <ul class="section-list">
+                <li><a href="{% url 'statuses_list' %}"><i class="fas fa-info-circle"></i> Статусы</a> — Просмотр существующих статусов.</li>
+                <li><a href="{% url 'summaries_list' %}"><i class="fas fa-chart-line"></i> Сводки</a> — Просмотр сводок по грузам.</li>
+                <li><a href="{% url 'contents' %}"><i class="fas fa-file-export"></i> Документы</a> — Управление документами.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

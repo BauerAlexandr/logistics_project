@@ -1,9 +1,18 @@
-from django.conf import settings
-from django.conf.urls.static import static
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
+    path('documents/', views.documents, name='documents'),
+
+    
+    path('password_reset/', views.CustomPasswordResetView.as_view(), name='password_reset'),
+    path('password_reset_done/', auth_views.PasswordResetDoneView.as_view(
+        template_name='logistics_app/password_reset_done.html'
+    ), name='password_reset_done'),
+    path('password_reset_confirm/<uidb64>/<token>/', views.CustomPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+
+    path('contents/', views.contents, name='contents'),
     path('profile/', views.user_profile, name='user_profile'),
     path('settings/', views.user_settings, name='user_settings'),
     path('register/', views.register, name='register'),
@@ -14,9 +23,8 @@ urlpatterns = [
     path('dashboard/client/', views.client_dashboard, name='client_dashboard'),
     path('dashboard/manager/', views.manager_dashboard, name='manager_dashboard'),
     
-    path('debug/', views.debug_view, name='debug'),
 
-    path('', views.index, name='index'),  # Главная страница
+    path('', views.index, name='index'),
 
     # Страницы для кораблей
     path('ships/', views.ship_list, name='ships_list'),
@@ -44,8 +52,6 @@ urlpatterns = [
     path('add-route/', views.route_list, name='add_route'),
     path('delete-route/<int:route_id>/', views.delete_route, name='delete_route'),
 
-    # Отчёты
-    path('reports/', views.reports, name='reports'),
 
     # Страницы для причалов
     path('piers/', views.pier_list, name='piers_list'),

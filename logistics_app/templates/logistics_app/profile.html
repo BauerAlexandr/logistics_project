@@ -23,7 +23,7 @@
                 <!-- Аватар пользователя -->
                 <div class="profile-avatar-section">
                     <div class="profile-avatar">
-                        <img class="avatar-img" src="{% if user.profile_image %}{{ MEDIA_URL }}{{ user.profile_image }}{% else %}{% static 'images/profile_placeholder.jpg' %}{% endif %}" alt="Аватар">
+                        <img class="avatar-img" src="{% if user.profile_image %}{{ MEDIA_URL }}{{ user.profile_image }}{% else %}{% static 'images/no image.png' %}{% endif %}" alt="Аватар">
                     </div>
                     <label for="file-input" class="upload-btn">Загрузить</label>
                     <input id="file-input" type="file" name="profile_image" class="hidden-input">

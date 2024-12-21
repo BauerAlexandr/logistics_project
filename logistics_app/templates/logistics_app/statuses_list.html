@@ -8,9 +8,11 @@
     <!-- Заголовок и кнопка добавления -->
     <h1 class="cargo-title">Статусы</h1>
     <div class="header-container">
-        <div class="add-cargo-button">
-            <button class="button-add" onclick="openModal('add-status-modal')">Добавить статус <i class="fas fa-plus"></i></button>
-        </div>
+        {% if 'add_status' in add_permissions %}
+            <div class="add-cargo-button">
+                <button class="button-add" onclick="openModal('add-status-modal')">Добавить статус <i class="fas fa-plus"></i></button>
+            </div>
+        {% endif %}
         <!-- Форма поиска -->
         <div class="search-container">
             <form method="get" action="{% url 'statuses_list' %}">
@@ -61,12 +63,17 @@
                         <a href="#" onclick="openModal('detail-status-modal-{{ status.id }}')">
                             <i class="fas fa-info-circle"></i>
                         </a>
-                        <a href="#" onclick="openModal('edit-status-modal-{{ status.id }}')">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <a href="#" onclick="openModal('delete-status-modal-{{ status.id }}')">
-                            <i class="fas fa-trash-alt"></i>
-                        </a>
+                        {% if 'change_status' in change_permissions %}
+                            <a href="#" onclick="openModal('edit-status-modal-{{ status.id }}')">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        {% endif %}
+
+                        {% if 'delete_status' in delete_permissions %}
+                            <a href="#" onclick="openModal('delete-status-modal{{ status.id }}')">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        {% endif %}
                     </td>
                 </tr>
 

@@ -7,9 +7,11 @@
 <div class="cargo-container">
     <h1 class="cargo-title">Улицы</h1>
     <div class="header-container">
-        <div class="add-cargo-button">
-            <button class="button-add" onclick="openModal('add-street-modal')">Добавить улицу <i class="fas fa-plus"></i></button>
-        </div>
+        {% if 'add_street' in add_permissions %}
+            <div class="add-cargo-button">
+                <button class="button-add" onclick="openModal('add-street-modal')">Добавить банк <i class="fas fa-plus"></i></button>
+            </div>
+        {% endif %}
         <div class="search-container">
             <form method="get" action="{% url 'streets_list' %}">
                 <div class="search-wrapper">
@@ -57,12 +59,17 @@
                         <a href="#" onclick="openModal('detail-street-modal-{{ street.id }}')">
                             <i class="fas fa-info-circle"></i>
                         </a>
-                        <a href="#" onclick="openModal('edit-street-modal-{{ street.id }}')">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <a href="#" onclick="openModal('delete-street-modal{{ street.id }}')">
-                            <i class="fas fa-trash-alt"></i>
-                        </a>
+                        {% if 'change_street' in change_permissions %}
+                            <a href="#" onclick="openModal('edit-street-modal-{{ street.id }}')">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        {% endif %}
+
+                        {% if 'delete_street' in delete_permissions %}
+                            <a href="#" onclick="openModal('delete-street-modal{{ street.id }}')">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        {% endif %}
                     </td>
                 </tr>
 

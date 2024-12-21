@@ -1,5 +1,5 @@
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group
 from django import forms
 from .models import Client, Ship, Cargo, Route, Pier, Bank, City, Crew, Port, Service, Shiptype
 from .models import CustomUser, Status, Street, Cargobatch, Unitofmeasurement, Summary, Transportation
@@ -16,7 +16,7 @@ class UserUpdateForm(forms.ModelForm):
 class UpdateUserForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['username', 'email']  # Поля для редактирования
+        fields = ['username', 'email']
         labels = {
             'username': 'Логин',
             'email': 'Email',
@@ -42,27 +42,6 @@ class UserRegistrationForm(UserCreationForm):
 class UserLoginForm(AuthenticationForm):
     username = forms.CharField(label="Username", max_length=254)
     password = forms.CharField(label="Password", widget=forms.PasswordInput)
-
-class CustomUserCreationForm(UserCreationForm):
-    email = forms.EmailField()
-    role = forms.ChoiceField(choices=[('client', 'Client'), ('director', 'Director'), ('manager', 'Manager')])
-
-    class Meta:
-        model = CustomUser
-        fields = ('username', 'email', 'role', 'password1', 'password2')
-
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        role = self.cleaned_data['role']
-
-        if commit:
-            user.save()
-
-        # Назначаем роль пользователю, используя группу в Django
-        group = Group.objects.get(name=role)
-        user.groups.add(group)
-
-        return user
 
 
 class ClientForm(forms.ModelForm):

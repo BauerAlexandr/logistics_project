@@ -7,9 +7,11 @@
 <div class="cargo-container">
     <h1 class="cargo-title">Города</h1>
     <div class="header-container">
-        <div class="add-cargo-button">
-            <button class="button-add" onclick="openModal('add-city-modal')">Добавить город <i class="fas fa-plus"></i></button>
-        </div>
+        {% if 'add_city' in add_permissions %}
+            <div class="add-cargo-button">
+                <button class="button-add" onclick="openModal('add-city-modal')">Добавить город <i class="fas fa-plus"></i></button>
+            </div>
+        {% endif %}
         <div class="search-container">
             <form method="get" action="{% url 'cities_list' %}">
                 <div class="search-wrapper">
@@ -57,12 +59,17 @@
                         <a href="#" onclick="openModal('detail-city-modal-{{ city.id }}')">
                             <i class="fas fa-info-circle"></i>
                         </a>
-                        <a href="#" onclick="openModal('edit-city-modal-{{ city.id }}')">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <a href="#" onclick="openModal('delete-city-modal{{ city.id }}')">
-                            <i class="fas fa-trash-alt"></i>
-                        </a>
+                        {% if 'change_city' in change_permissions %}
+                            <a href="#" onclick="openModal('edit-city-modal-{{ city.id }}')">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        {% endif %}
+
+                        {% if 'delete_city' in delete_permissions %}
+                            <a href="#" onclick="openModal('delete-city-modal{{ city.id }}')">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        {% endif %}
                     </td>
                 </tr>
 

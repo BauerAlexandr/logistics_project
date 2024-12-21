@@ -96,7 +96,6 @@
 .cargo-table td {
     text-align: center; /* Выравниваем текст по центру */
     vertical-align: middle; /* Выравниваем текст по вертикали */
-     /* Запрещаем перенос текста */
     overflow: hidden; /* Скрываем лишний текст */
     text-overflow: ellipsis; /* Добавляем многоточие для обрезанного текста */
     max-width: 250px; /* Ограничиваем максимальную ширину */
@@ -163,7 +162,6 @@
 }
 
 
-/* Оверлей модального окна */
 /* Основной стиль для модального окна */
 .modal-overlay {
     position: fixed;
@@ -225,14 +223,14 @@
     margin-bottom: 5px;
     font-size: 0.9em;
     font-weight: 300;
-    color: #b0b0b5; /* Светло-серый цвет текста */
+    color: #b0b0b5;
 }
 
 .form-group input,
 .form-group textarea {
     width: 100%;
     padding: 12px;
-    background-color: #3b3b4f; /* Темный фон */
+    background-color: #3b3b4f;
     border: none;
     border-radius: 8px;
     color: white;
@@ -290,7 +288,7 @@ select {
     padding: 10px;
     font-size: 1em;
     outline: none;
-    width: 100%; /* Полная ширина контейнера */
+    width: 100%;
     box-sizing: border-box;
     cursor: pointer;
 }
@@ -308,11 +306,11 @@ select:focus {
 
 /* Описание в модальном окне */
 #detail-description {
-    word-wrap: break-word; /* Перенос длинных слов */
-    overflow-wrap: break-word; /* Альтернативный вариант для современных браузеров */
-    max-width: 100%; /* Ограничение по ширине */
-    white-space: normal; /* Обычный перенос строк */
-    margin-bottom: 10px; /* Отступ снизу */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+    white-space: normal;
+    margin-bottom: 10px;
 }
 
 
@@ -355,19 +353,19 @@ select:focus {
 }
 
 th a {
-    color: white !important; /* Сделать цвет белым */
+    color: white !important;
     text-decoration: none !important;
-    margin-left: 5px !important; /* Отступ между текстом и иконкой */
+    margin-left: 5px !important;
 }
 
 th i {
-    font-size: 1.5em !important; /* Увеличенный размер иконок */
+    font-size: 1.5em !important;
     color: white !important;
     vertical-align: middle !important;
 }
 
 th a:hover i {
-    color: #d4d4d4 !important; /* Цвет иконок при наведении */
+    color: #d4d4d4 !important;
 }
 
 
@@ -383,10 +381,10 @@ th a:hover i {
     position: relative;
     display: inline-flex;
     align-items: center;
-    border: 3px solid #2c2c3e; /* Тёмный контур */
+    border: 3px solid #2c2c3e;
     border-radius: 25px;
     padding: 2px;
-    background-color: #3b3b4f; /* Фон ввода */
+    background-color: #3b3b4f;
     max-width: 250px;
 }
 
@@ -422,7 +420,7 @@ th a:hover i {
 
 /* Иконка поиска */
 .search-button i {
-    font-weight: 900; /* Толстая иконка */
+    font-weight: 900;
 }
 
 .search-button:hover {
@@ -432,8 +430,8 @@ th a:hover i {
 
 /* Контейнер для заголовка */
 .header-container {
-    display: flex; /* Включаем Flexbox */
-    justify-content: space-between; /* Равномерно распределяем элементы */
-    align-items: center; /* Выравниваем элементы по центру по вертикали */
-    margin-bottom: 20px; /* Отступ снизу */
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+    margin-bottom: 20px;
 }

@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Авторизация</title>
+    <link rel="icon" type="image/png" href="{% static 'images/favicon64x64.png' %}">
     <link rel="stylesheet" href="{% static 'css/authorization.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -26,7 +27,7 @@
             </div>
             <!-- Ссылки -->
             <div class="links">
-                <a href="#">Забыли пароль?</a>
+                <a href="{% url 'password_reset' %}">Забыли пароль?</a>
                 <a href="{% url 'register' %}">Регистрация</a>
             </div>
             <!-- Кнопка -->

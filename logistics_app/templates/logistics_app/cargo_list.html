@@ -8,9 +8,11 @@
     <!-- Заголовок и кнопка добавления -->
     <h1 class="cargo-title">Грузы</h1>
     <div class="header-container">
-        <div class="add-cargo-button">
-            <button class="button-add" onclick="openModal('add-cargo-modal')">Добавить груз <i class="fas fa-plus"></i></button>
-        </div>
+        {% if 'add_cargo' in add_permissions %}
+            <div class="add-cargo-button">
+                <button class="button-add" onclick="openModal('add-cargo-modal')">Добавить груз <i class="fas fa-plus"></i></button>
+            </div>
+        {% endif %}
         <!-- Форма поиска -->
         <div class="search-container">
             <form method="get" action="{% url 'cargo_list' %}">
@@ -109,17 +111,42 @@
                     <td>{{ cargo.insured_value }}</td>
                     <td>{{ cargo.unit_of_measurement }}</td>
                     <td class="actions">
-                        <a href="#" onclick="openDetailModal('{{ cargo.name }}', '{{ cargo.description }}', '{{ cargo.declared_value }}', '{{ cargo.insured_value }}', '{{ cargo.unit_of_measurement }}')">
+                        <a href="#" onclick="openModal('detail-cargo-modal-{{ cargo.id }}')">
                             <i class="fas fa-info-circle"></i>
                         </a>
-                        <a href="#" onclick="openModal('edit-cargo-modal-{{ cargo.id }}')">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <a href="#" onclick="openModal('delete-cargo-modal{{ cargo.id }}')">
-                            <i class="fas fa-trash-alt"></i>
-                        </a>
+                        {% if 'change_cargo' in change_permissions %}
+                            <a href="#" onclick="openModal('edit-cargo-modal-{{ cargo.id }}')">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        {% endif %}
+
+                        {% if 'delete_cargo' in delete_permissions %}
+                            <a href="#" onclick="openModal('delete-cargo-modal{{ cargo.id }}')">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        {% endif %}
                     </td>
                 </tr>
+
+                <!-- Модальное окно подробностей -->
+                <div class="modal-overlay" id="detail-cargo-modal-{{ cargo.id }}">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Детали груза</h3>
+                            <button class="modal-close" onclick="closeModal('detail-cargo-modal-{{ cargo.id }}')">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <p><strong>Название:</strong> {{ cargo.name }}</p>
+                            <p><strong>Описание:</strong> {{ cargo.description }}</p>
+                            <p><strong>Заявленная величина:</strong> {{ cargo.declared_value }}</p>
+                            <p><strong>Застрахованная величина:</strong> {{ cargo.unit_of_measurement }}</p>
+                            <p><strong>Ед. измерения:</strong> {{ cargo.insured_value }}</p>
+                        </div>
+                        <div class="modal-actions">
+                            <button type="button" class="button-cancel" onclick="closeModal('detail-cargo-modal-{{ cargo.id }}')">Закрыть</button>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Модальное окно редактирования для каждого объекта -->
                 <div class="modal-overlay" id="edit-cargo-modal-{{ cargo.id }}">
@@ -231,24 +258,6 @@
                 <button type="button" class="button-cancel" onclick="closeModal('add-cargo-modal')">Отмена</button>
             </div>
         </form>
-    </div>
-</div>
-
-<!-- Модальное окно для просмотра подробностей -->
-<div class="modal-overlay" id="detail-modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Детали груза</h3>
-            <button class="modal-close" onclick="closeModal('detail-modal')">&times;</button>
-        </div>
-        <p><strong>Название:</strong> <span id="detail-name"></span></p>
-        <p><strong>Описание:</strong> <span id="detail-description"></span></p>
-        <p><strong>Заявленная величина:</strong> <span id="detail-declared"></span></p>
-        <p><strong>Застрахованная величина:</strong> <span id="detail-insured"></span></p>
-        <p><strong>Ед. измерения:</strong> <span id="detail-unit"></span></p>
-        <div class="modal-actions">
-            <button type="button" class="button-cancel" onclick="closeModal('detail-modal')">Закрыть</button>
-        </div>
     </div>
 </div>
 

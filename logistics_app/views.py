@@ -1,21 +1,94 @@
+import csv
+from django.http import HttpResponse
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import login, logout
 from django.contrib.auth.models import Group
-from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.forms import PasswordChangeForm, PasswordResetForm, SetPasswordForm
+from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.db.models import Q
-from django.contrib.auth import update_session_auth_hash
+from django.db import connection
+from django.urls import reverse_lazy
+from django.contrib.auth import update_session_auth_hash, get_user_model
 from django.db.models.deletion import ProtectedError
 from .models import Client, Ship, Cargo, Route, Pier, Bank, City, Crew, Port, Service, Shiptype
 from .models import Status, Street, Cargobatch, Unitofmeasurement, Summary, Transportation
 from .forms import UserRegistrationForm, UserLoginForm, ClientForm, ShipForm, CargoForm, RouteForm, PierForm
 from .forms import BankForm, CargoBatchForm, CityForm, CrewForm, PortForm, ServiceForm, ShipTypeForm
-from .forms import StatusForm, StreetForm, SummaryForm, TransportationForm, UnitOfMeasurementForm, UpdateUserForm, UserUpdateForm
+from .forms import StatusForm, StreetForm, SummaryForm, TransportationForm, UnitOfMeasurementForm, UpdateUserForm
 
+
+def documents(request):
+    results = None
+    error = None
+    query = None
+
+    if request.method == 'POST':
+        query = request.POST.get('query', '').strip()
+        if not query.lower().startswith('select'):
+            error = "Ошибка: Разрешены только запросы SELECT."
+        else:
+            try:
+                with connection.cursor() as cursor:
+                    cursor.execute(query)  # Выполняем только запросы SELECT
+
+                    # Обработка результатов SELECT
+                    columns = [col[0] for col in cursor.description]
+                    rows = cursor.fetchall()
+                    results = {
+                        'columns': columns,
+                        'rows': rows
+                    }
+            except Exception as e:
+                error = f"Ошибка выполнения запроса: {e}"
+
+        # Экспорт в CSV
+        if 'export' in request.POST and results:
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="query_results.csv"'
+
+            response.write('\ufeff'.encode('utf-8'))
+
+            writer = csv.writer(response)
+            writer.writerow(results['columns'])
+            writer.writerows(results['rows'])
+            return response
+
+    return render(request, 'logistics_app/documents.html', {
+        'results': results,
+        'error': error,
+        'query': query
+    })
+
+
+User = get_user_model()
+# Запрос на сброс пароля
+class CustomPasswordResetView(PasswordResetView):
+    template_name = 'logistics_app/password_reset.html'
+    success_url = reverse_lazy('password_reset_done')
+    email_template_name = 'logistics_app/password_reset_email.html'
+    form_class = PasswordResetForm
+
+    def form_valid(self, form):
+        email = form.cleaned_data.get('email')
+        # Проверка существования пользователя
+        if User.objects.filter(email=email).exists():
+            messages.success(self.request, 'Инструкция по восстановлению пароля отправлена на указанный email.')
+            return super().form_valid(form)
+        else:
+            messages.error(self.request, 'Пользователь с таким email не найден.')
+            return redirect('password_reset')
+
+
+# Подтверждение сброса пароля
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    template_name = 'logistics_app/password_reset_confirm.html'
+    success_url = reverse_lazy('login')
+    form_class = SetPasswordForm
 
 @login_required
 def user_profile(request):
@@ -60,14 +133,6 @@ def user_settings(request):
     return render(request, 'logistics_app/settings.html', {
         'user_form': user_form,
         'password_form': password_form,
-    })
-
-@login_required
-def debug_view(request):
-    return render(request, 'logistics_app/debug.html', {
-        'role': request.user.role,
-        'groups': request.user.groups.all(),
-        'permissions': request.user.get_all_permissions(),
     })
 
 def register(request):
@@ -123,24 +188,27 @@ def dashboard(request):
 def director_dashboard(request):
     if request.user.role != 'director':
         return redirect('login')
-    return render(request, 'logistics_app/director_dashboard.html')
+    return render(request, 'logistics_app/index.html')
 
 
 @login_required
 def client_dashboard(request):
     if request.user.role != 'client':
         return redirect('login')
-    return render(request, 'logistics_app/client_dashboard.html')
+    return render(request, 'logistics_app/index.html')
 
 
 @login_required
 def manager_dashboard(request):
     if request.user.role != 'manager':
         return redirect('login')
-    return render(request, 'logistics_app/manager_dashboard.html')
+    return render(request, 'logistics_app/index.html')
 
 def index(request):
     return render(request, 'logistics_app/index.html')
+
+def contents(request):
+    return render(request, 'logistics_app/contents.html')
 
 # === SHIPS ===
 @permission_required('logistics_app.view_ship', raise_exception=True)
@@ -215,7 +283,6 @@ def edit_ship(request, ship_id):
         form = ShipForm(request.POST, request.FILES, instance=ship)
         if form.is_valid():
             if 'photo' in request.FILES:
-                # Если новое фото загружено, добавляем путь "ships/"
                 photo_file = request.FILES['photo']
                 file_path = default_storage.save(f"ships/{photo_file.name}", ContentFile(photo_file.read()))
                 ship.photo = file_path
@@ -240,7 +307,7 @@ def edit_ship_photo(request, ship_id):
         if 'delete-photo' in request.POST:
             # Удаление текущего фото
             if ship.photo:
-                default_storage.delete(ship.photo)  # Удаляем файл из хранилища
+                default_storage.delete(ship.photo)
                 ship.photo = None
                 ship.save()
                 messages.success(request, "Фото удалено.")
@@ -251,7 +318,7 @@ def edit_ship_photo(request, ship_id):
             ship.photo = file_path
             ship.save()
             messages.success(request, "Фото обновлено.")
-        return redirect('ships_list')  # Перенаправление на список кораблей
+        return redirect('ships_list') 
 
     return redirect('ships_list')
 
@@ -284,7 +351,7 @@ def cargo_list(request):
 
     units = Unitofmeasurement.objects.all()
 
-    # Пагинация: 10 записей на странице
+    # Пагинация
     paginator = Paginator(cargos, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -308,7 +375,7 @@ def cargo_list(request):
         'units': units,
         'current_sort': request.GET.get('sort', 'name'),
         'current_order': order,
-        'query': query,  # Передаём поисковый запрос в шаблон
+        'query': query,
     })
 
 
@@ -371,7 +438,7 @@ def clients_list(request):
     cities = City.objects.all()
     statuses = Status.objects.all()
     banks = Bank.objects.all()
-    # Пагинация: 10 записей на странице
+    # Пагинация: 
     paginator = Paginator(clients, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -395,7 +462,7 @@ def clients_list(request):
         'client_form': client_form,
         'current_sort': request.GET.get('sort', 'name'),
         'current_order': order,
-        'query': query,  # Передаём поисковый запрос в шаблон
+        'query': query,
         'streets': streets,
         'cities': cities,
         'statuses': statuses,
@@ -497,9 +564,6 @@ def delete_route(request, route_id):
     messages.success(request, "Маршрут успешно удалён!")
     return redirect('routes_list')
 
-# === REPORTS ===
-def reports(request):
-    return render(request, 'logistics_app/reports.html')
 
 # === PIERS ===
 @permission_required('logistics_app.view_pier', raise_exception=True)

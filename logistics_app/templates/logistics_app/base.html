@@ -47,20 +47,20 @@
             {% endfor %}
         </div>
         <div class="profile">
-            <img src="{% static 'images/profile_placeholder.jpg' %}" alt="Profile">
+            <img class="avatar-img" src="{% if user.profile_image %}{{ MEDIA_URL }}{{ user.profile_image }}{% else %}{% static 'images/no image.png' %}{% endif %}" alt="Аватар">
             <span>{{ user.username }}<i class="fas fa-chevron-down"></i></span>
             <div class="profile-dropdown">
                 <a href="{% url 'user_profile' %}">Профиль</a>
                 <a href="{% url 'user_settings' %}">Настройки</a>
+                <a href="{% url 'contents' %}">Оглавление</a>
                 <a href="{% url 'logout' %}">Выход</a>
             </div>
         </div>
     </nav>
 
-    <!-- Основной контент -->
+    
     <div class="content">
         {% block content %}
-        <!-- Содержимое страницы -->
         {% endblock %}
     </div>
 </body>
